@@ -120,7 +120,7 @@ jobs:
 
       - name: Build delta index
         if: steps.mode.outputs.mode == 'delta'
-        run: node Scripts/build-delta.mjs data "build/delta-$(date -u +%F).index" --mark
+        run: node Scripts/build-delta.mjs data "build/delta-$(date -u +%F).index"
 
       - name: Build base index
         if: steps.mode.outputs.mode == 'base'
@@ -150,6 +150,13 @@ jobs:
             data/records.ndjson
             data/published.json
           key: tmdb-store-${{ github.run_id }}
+
+      # After the publish, never before: the marker is what the next delta measures from, and moving it
+      # when the delta is only built means a failed publish drops that day's changes from every later
+      # delta as well.
+      - name: Mark the delta published
+        if: steps.mode.outputs.mode == 'delta'
+        run: node Scripts/build-delta.mjs data "build/delta-$(date -u +%F).index" --mark-only
 
       - name: Publish the rolling release
         env:

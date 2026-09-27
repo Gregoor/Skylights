@@ -19,10 +19,20 @@ const dir = resolve(process.argv[2] ?? "data");
 const out = resolve(process.argv[3] ?? "build/delta.index");
 const sinceArg = process.argv.find((a) => a.startsWith("--since="));
 const markArg = process.argv.includes("--mark");
+// Marking without building: the marker is what the next delta measures from, so it has to move only once
+// this run's delta is really published. Marking while building loses a day's changes for good if the
+// publish then fails, because the next delta starts after them.
+const markOnly = process.argv.includes("--mark-only");
 
 const markerPath = resolve(dir, "published.json");
 const marker = existsSync(markerPath) ? JSON.parse(readFileSync(markerPath, "utf8")) : {};
 const since = sinceArg ? Number(sinceArg.slice("--since=".length)) : Number(marker.since ?? 0);
+
+if (markOnly) {
+  writeFileSync(markerPath, JSON.stringify({ since: Date.now() }));
+  console.log(`marked published.json — the delta it measures from is published`);
+  process.exit(0);
+}
 
 // Last-wins per key, through the same streaming reader every other tool uses.
 const latest = readStore(dir);
