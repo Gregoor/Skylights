@@ -254,6 +254,11 @@ export default function command() {
 
   registerRootSearchProvider({
     id: "wikipedia",
+    // Below the movie provider's 2, deliberately: an article whose title is also a film's is the
+    // fallback rather than the answer. Still above 0, so a wiki row outranks a provider that declares
+    // no precedence at all — where a query ties across providers, a declared one is the deliberate
+    // answer and an undeclared one is not.
+    precedence: 1,
     async search(query, { limit }) {
       const corpus = ensureIndexes();
       // Nothing mounted yet: answer nothing rather than waiting for it. The mount it just started

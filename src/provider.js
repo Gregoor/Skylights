@@ -42,6 +42,12 @@ export default function command() {
 
   registerRootSearchProvider({
     id: "movies",
+    // A title that is both a film and an article — "Dune", "Severance" — matches both providers
+    // equally, and each candidate `score` is relative to its own provider's matcher, so neither can
+    // say which one was meant. This is what compares them across providers: where the two tie, the
+    // movie is the answer and the wiki's article about it is the fallback, so the movie provider
+    // outranks the encyclopedia (which declares the lower one below).
+    precedence: 2,
     search: (query, { limit }) => core.search(query, limit),
     async perform(resultId) {
       const url = activationURL(resultId);
