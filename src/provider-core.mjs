@@ -96,20 +96,20 @@ export function createProviderCore({
       opening = (async () => {
         // Read the display config before the sync, so a pruning bug in the sync can never eat it.
         ratings ??= readRatingsPreference(fs, cacheDir, log);
-        // A mount is the first query of every palette session and the manifest check is a network round
-        // trip, so a cache checked within the refresh window mounts straight from disk.
-        const paths =
-          installedPaths({ cacheDir, fs, maxAgeMs: refreshMs, now })
-          ?? await syncIndexes({ manifestURL, cacheDir, fs, download, gunzip, log, now });
-        const key = paths.join("|");
-        // Unchanged manifest: keep the open set rather than re-reading the whole index.
-        if (key === openPaths && indexes) return indexes;
-        const list = [];
-        for (const path of paths) {
-          list.push(await new MovieIndex({ reader: openRuntimeReader(path, fs) }).open());
+        // Open what is installed before asking whether anything newer exists. A cache that is merely due
+        // a check holds a valid index, and opening it here is what lets a failed sync leave it serving:
+        // a manifest naming an asset the release does not have must not turn into an empty launcher.
+        indexes = await openPathsFor(installedPaths({ cacheDir, fs, maxAgeMs: Infinity, now }));
+        // A cache checked within the refresh window mounts straight from disk; anything else checks the
+        // manifest, which is a network round trip and no longer holds a query, since the transfer yields.
+        if (installedPaths({ cacheDir, fs, maxAgeMs: refreshMs, now })) return indexes;
+        try {
+          indexes =
+            await openPathsFor(await syncIndexes({ manifestURL, cacheDir, fs, download, gunzip, log, now }));
+        } catch (error) {
+          log(`tmdb index refresh failed, serving what is installed: ${error?.message ?? error}`);
         }
-        openPaths = key;
-        return list;
+        return indexes;
       })();
       opening
         .then((list) => {
@@ -122,6 +122,20 @@ export function createProviderCore({
         });
     }
     return opening;
+  }
+
+  /// The indexes a path list names, or the open set when there is nothing to open. Re-opens only when
+  /// the set changed, because opening an index reads hundreds of megabytes.
+  async function openPathsFor(paths) {
+    if (!paths || paths.length === 0) return indexes;
+    const key = paths.join("|");
+    if (key === openPaths && indexes) return indexes;
+    const list = [];
+    for (const path of paths) {
+      list.push(await new MovieIndex({ reader: openRuntimeReader(path, fs) }).open());
+    }
+    openPaths = key;
+    return list;
   }
 
   async function search(query, limit) {
