@@ -49,11 +49,22 @@ export async function syncIndexes({
       log(`downloading ${asset.name}`);
       const packed = `${local}.gz`;
       try {
-        await download(dir + asset.name + ".gz", packed);
-        await gunzip(packed, local);
-      } catch {
-        log(`${asset.name}.gz unavailable — falling back to the uncompressed asset`);
-        await download(dir + asset.name, local);
+        try {
+          await download(dir + asset.name + ".gz", packed);
+          await gunzip(packed, local);
+        } catch {
+          log(`${asset.name}.gz unavailable — falling back to the uncompressed asset`);
+          await download(dir + asset.name, local);
+        }
+      } catch (error) {
+        // A delta the release does not have is a publish that half-finished: the manifest was written, the
+        // asset never landed. A delta is additive, so the base and the deltas that did arrive are still a
+        // valid index and skipping this one keeps every later update flowing — where throwing loses the
+        // whole sync, records nothing, and retries from scratch on the next query. A missing base is fatal,
+        // because then there is nothing to read at all.
+        if (asset === manifest.base) throw error;
+        log(`${asset.name} is listed but not published — skipping it`);
+        continue;
       } finally {
         fs.rmSync(packed, { force: true });
       }
@@ -73,7 +84,9 @@ export async function syncIndexes({
   }
 
   fs.writeFileSync(installedPath, JSON.stringify({ version: manifest.version, assets, checkedAt: now() }));
-  return wanted.map((a) => `${cacheDir}/${a.name}`);
+  // What was actually installed, in the manifest's order — a skipped delta has no file to open, and the
+  // caller opens every path this returns.
+  return Object.keys(assets).map((name) => `${cacheDir}/${name}`);
 }
 
 /// The installed index paths, when the last manifest check is recent enough to skip asking again.
