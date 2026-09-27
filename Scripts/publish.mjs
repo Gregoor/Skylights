@@ -100,6 +100,25 @@ const manifestPath = join(scratch, MANIFEST);
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
 gh(["release", "upload", TAG, manifestPath, "--clobber"]);
 
+// Uploading before writing the manifest is what the comment above claims keeps a client from seeing one
+// whose assets are missing. Claiming it is not checking it: a manifest naming an asset the release does
+// not have breaks every client that reads it, because the sync downloads each path it names and throws
+// on the one that is not there — which is how a day of searches returned nothing. So list what the
+// release really holds, publish a manifest that only names that, and fail, because a silently short
+// publish is what needed catching.
+const present = new Set(
+  execFileSync("gh", ["release", "view", TAG, "--json", "assets", "--jq", ".assets[].name"], { encoding: "utf8" })
+    .split("\n").map((name) => name.trim()).filter(Boolean));
+const missing = [base, ...deltas, bundle, store].filter(Boolean).filter((a) => !present.has(a.name));
+if (missing.length > 0) {
+  if (base && !present.has(base.name)) manifest.base = null;
+  manifest.deltas = deltas.filter((d) => present.has(d.name));
+  writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
+  gh(["release", "upload", TAG, manifestPath, "--clobber"]);
+  throw new Error(
+    `the release is missing ${missing.map((a) => a.name).join(", ")} — trimmed the manifest to what exists and republished it`);
+}
+
 // Prune assets the new manifest no longer references (deltas folded into a fresh base).
 const keep = new Set([MANIFEST, base?.name, bundle.name, store?.name, ...deltas.map((d) => d.name)].filter(Boolean));
 const listed = execFileSync("gh", ["release", "view", TAG, "--json", "assets", "--jq", ".assets[].name"],
