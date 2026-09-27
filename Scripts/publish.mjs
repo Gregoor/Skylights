@@ -109,10 +109,14 @@ gh(["release", "upload", TAG, manifestPath, "--clobber"]);
 const present = new Set(
   execFileSync("gh", ["release", "view", TAG, "--json", "assets", "--jq", ".assets[].name"], { encoding: "utf8" })
     .split("\n").map((name) => name.trim()).filter(Boolean));
-const missing = [base, ...deltas, bundle, store].filter(Boolean).filter((a) => !present.has(a.name));
+// The manifest names the file that gets installed; the release holds its gzipped sibling, because how an
+// asset travels is a detail of getting it there. Checking the plain name alone called every asset that
+// travelled that way missing, and trimmed a manifest that was telling the truth.
+const has = (asset) => present.has(asset.name) || present.has(`${asset.name}.gz`);
+const missing = [base, ...deltas, bundle, store].filter(Boolean).filter((asset) => !has(asset));
 if (missing.length > 0) {
-  if (base && !present.has(base.name)) manifest.base = null;
-  manifest.deltas = deltas.filter((d) => present.has(d.name));
+  if (base && !has(base)) manifest.base = null;
+  manifest.deltas = deltas.filter(has);
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
   gh(["release", "upload", TAG, manifestPath, "--clobber"]);
   throw new Error(
