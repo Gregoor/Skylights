@@ -125,12 +125,18 @@ if (missing.length > 0) {
 
 // Prune assets the new manifest no longer references (deltas folded into a fresh base).
 const keep = new Set([MANIFEST, base?.name, bundle.name, store?.name, ...deltas.map((d) => d.name)].filter(Boolean));
+// An asset travels under `<name>.gz` while the manifest names `<name>`, so a keep list built from the
+// manifest's names does not match what the release holds. Every delta published since assets started
+// travelling that way was deleted by the prune of the very run that uploaded it, with the manifest left
+// naming it and the clients failing on it. Kept means the manifest's name, with or without the suffix it
+// travels under.
+const kept = (name) => keep.has(name) || (name.endsWith(".gz") && keep.has(name.slice(0, -3)));
 const listed = execFileSync("gh", ["release", "view", TAG, "--json", "assets", "--jq", ".assets[].name"],
   { encoding: "utf8" }).split("\n").map((s) => s.trim()).filter(Boolean);
 for (const name of listed) {
   // The Wikipedia publisher shares this release and prunes its own assets. A sweep here would delete
   // everything this manifest does not happen to know about.
-  if (name.startsWith("wikipedia-") || keep.has(name)) continue;
+  if (name.startsWith("wikipedia-") || kept(name)) continue;
   console.log(`pruning stale asset ${name}`);
   gh(["release", "delete-asset", TAG, name, "-y"], { stdio: "ignore" });
 }
