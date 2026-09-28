@@ -170,14 +170,6 @@ export default function command() {
   /// The mounted bands and the cross-language map beside each — one object, replaced as a whole — and
   /// the mount in flight, if any.
   let mounted = null;
-  /// Resolves when the first wiki is mounted, so a cold query can wait for that one rather than for all.
-  let firstUp = null;
-  let resolveFirst = null;
-  /// How long a cold query waits for the first wiki. The mount is a few hundred milliseconds and a
-  /// session's first query lands inside it; the launcher shows its own rows meanwhile, so waiting is what
-  /// makes that query worth answering. Long enough to cover a mount, short enough not to be felt as a
-  /// stall of its own.
-  const COLD_WAIT_MS = 400;
   let mounting = null;
   let syncedAt = 0;
   /// A search only returns an id, so activation needs what the row was built from: the article title
@@ -218,10 +210,7 @@ export default function command() {
   async function mount() {
     const corpus = { bands: [], languageGroups: new Map() };
     for (const language of LANGUAGES) {
-      if ((await install(language, corpus)) && !mounted) {
-        mounted = corpus;
-        resolveFirst?.();
-      }
+      if ((await install(language, corpus)) && !mounted) mounted = corpus;
     }
     for (const language of LANGUAGES) {
       const cacheDir = `${CACHE_DIR}/${language}`;
@@ -249,18 +238,8 @@ export default function command() {
     return mounted;
   }
 
-  /// Bounded wait for the first wiki, for a query that arrives while the mount is still opening them.
-  async function waitForFirst() {
-    if (!firstUp) return null;
-    await Promise.race([firstUp, new Promise((resolve) => setTimeout(resolve, COLD_WAIT_MS))]);
-    return mounted;
-  }
-
   function startMount() {
     if (mounting) return;
-    firstUp ??= new Promise((resolve) => {
-      resolveFirst = resolve;
-    });
     mounting = mount()
       .then((corpus) => {
         mounted = corpus;
@@ -281,11 +260,9 @@ export default function command() {
     // answer and an undeclared one is not.
     precedence: 1,
     async search(query, { limit }) {
-      // A cold provider has nothing while its mount runs, and a session's first query lands inside that
-      // window — answering nothing there is the one query a session cannot recover from. What is mounted
-      // is served immediately; only an empty mount waits, and only for the first wiki rather than all
-      // three. In the steady state this never waits at all.
-      const corpus = ensureIndexes() ?? (await waitForFirst());
+      const corpus = ensureIndexes();
+      // Nothing mounted yet: answer nothing rather than waiting for it. The mount it just started
+      // serves the next query, which is what keeps a first-query mount out of the p99.
       if (!corpus) return [];
       const { bands, languageGroups } = corpus;
       // Ask for enough that every row's siblings are in the pool: a merge can only offer a language it
