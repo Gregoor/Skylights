@@ -133,9 +133,11 @@ const check = (label, ok, extra = "") => {
   check(`...as is last year's`, inBand({ voteCount: 1, year: Y - RECENT_YEARS + 1 }, { year: Y }));
   check("...but one older than that is out",
     !inBand({ voteCount: 1, year: Y - RECENT_YEARS }, { year: Y }));
-  // The export adds zero-vote entries daily; keeping them is what made plain recency too broad.
-  check("a recent title nobody has seen is out", !inBand({ voteCount: 0, year: Y }, { year: Y }));
-  check("a missing vote count counts as none", !inBand({ title: "no votes field" }, { year: Y }));
+  // An unreleased film has no votes by definition, and it is the one someone is about to search for:
+  // recency carries it, whatever the export's long tail of zero-vote entries costs with it.
+  check("a recent title nobody has seen is in", inBand({ voteCount: 0, year: Y }, { year: Y }));
+  check("...and so is one from a year not reached yet", inBand({ voteCount: 0, year: Y + 1 }, { year: Y }));
+  check("a record with neither a year nor votes is out", !inBand({ title: "no fields" }, { year: Y }));
 
   // The builders must apply it — a predicate nothing uses would guard nothing.
   const bdir = resolve(tmpdir(), "tmdb-band");

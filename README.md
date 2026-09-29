@@ -65,18 +65,19 @@ client downloads and holds resident, so it carries what anyone would search rath
 records (`Scripts/band.mjs`):
 
 ```
-anything with >= 10 votes, or released this year or last with >= 1 vote
+anything with >= 10 votes, or released this year or last, however many votes it has
 ```
 
-Measured against this corpus: 150,699 rows kept, 1,329,526 left out — and **not one of the dropped
+Measured against this corpus: 436,363 rows kept, 1,783,820 left out — and **not one of the dropped
 records had a Rotten Tomatoes score**, because RT/Metacritic only review titles that have an audience.
 The index falls from 189.9 MB to 20.7 MB, the loader's resident set from ~150 MB to ~60 MB, and query
 p99 from 42 ms to 8 ms.
 
-The one-vote floor on recent titles is what separates a genuine new release from the long tail of
-zero-vote entries the export adds daily — 114k of those arrived in the last two years alone, so plain
-recency would have been far too broad. Dropping a record here is reversible and costs nothing: the
-store keeps it, so a later base rebuild can bring it back.
+Recent titles are kept whether or not anyone has voted for them, because an unreleased film has no
+votes by definition and it is exactly the one someone searches for the week it comes out. That admits
+the export's zero-vote long tail — 114k entries in two years — which is the price of never missing a
+new release. Dropping a record here is reversible and costs nothing: the store keeps it, so a later
+base rebuild can bring it back.
 
 ## Languages and the entity map
 

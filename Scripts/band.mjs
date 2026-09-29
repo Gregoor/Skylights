@@ -9,11 +9,11 @@
 // no score for ~96% of those, so they cannot show a rating either.
 //
 // So the index keeps what anyone would search: anything with real votes, plus anything released this
-// year or last that at least one person has seen. That one-vote floor is what separates a genuine new
-// release from the long tail of zero-vote entries the export adds daily — 114k of those arrived in the
-// last two years alone, which is why plain recency was far too broad.
+// year or last, whether or not anyone has voted for it yet. A film someone is about to see cannot be
+// waited for until TMDB has a rating: an unreleased title has none by definition, and a search that
+// misses the film that is out this week misses the one query the index exists to answer.
 //
-// Result: 150,699 rows and 20.7 MB, against 1,480,225 rows and 189.9 MB — 9.2x smaller.
+// Result: 436,363 rows, against 2,220,183 records in the store.
 
 export const MIN_VOTES = 10;
 export const RECENT_YEARS = 2;
@@ -23,7 +23,7 @@ export const RECENT_YEARS = 2;
 export function inBand(record, { year = new Date().getFullYear() } = {}) {
   const votes = record?.voteCount ?? 0;
   if (votes >= MIN_VOTES) return true;
-  return (record?.year ?? 0) >= year - (RECENT_YEARS - 1) && votes >= 1;
+  return (record?.year ?? 0) >= year - (RECENT_YEARS - 1);
 }
 
 /// Kept/dropped counts, for the builders to report what they left out.
