@@ -21,6 +21,15 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
-	<array/>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.tinycast.tmdbspotlight.refresh</string>
+		<string>com.tinycast.tmdbspotlight.processing</string>
+		<string>com.tinycast.tmdbspotlight.full-index</string>
+	</array>
 </dict>
 </plist>

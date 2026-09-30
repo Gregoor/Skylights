@@ -224,8 +224,12 @@ export default function command() {
           fs,
           download,
           gunzip,
+          log: console.log,
         });
-      } catch {
+      } catch (error) {
+        // A failed sync leaves the copy mounted first still serving, which is what mounting it first is
+        // for — but say so, because silence here hides that a wiki has stopped receiving updates at all.
+        console.log(`wikipedia-${language} refresh failed, serving what is installed: ${error?.message ?? error}`);
         continue;
       }
       await install(language, corpus);

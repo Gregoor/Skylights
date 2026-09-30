@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D9DBCFBAF75640EDD2330B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 16DD0A659033076E845C77C5 /* Assets.xcassets */; };
 		2B78994485D8BE5F15DFF0B5 /* SpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63886FF1B5D21721114E708F /* SpotlightIndexer.swift */; };
 		C03745FEC8CB4C6960FF56AF /* TMDBSpotlightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3FC8EBC13382AA15BD22C3 /* TMDBSpotlightApp.swift */; };
 		C82E2BAD64A94205DF7BED70 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657906B9DA503ECFC962A86 /* ContentView.swift */; };
@@ -16,11 +17,12 @@
 
 /* Begin PBXFileReference section */
 		0E109466A2DADC76EF1E39E1 /* DiagnosticLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticLog.swift; sourceTree = "<group>"; };
+		16DD0A659033076E845C77C5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		276198DF22629915617695B5 /* Gzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gzip.h; sourceTree = "<group>"; };
 		55DC7A8F286FC0382782F906 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		63886FF1B5D21721114E708F /* SpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndexer.swift; sourceTree = "<group>"; };
 		7657906B9DA503ECFC962A86 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		778C2F1924CDCBA2566F9790 /* TMDBSpotlight.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TMDBSpotlight.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		778C2F1924CDCBA2566F9790 /* TMDB Spotlight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TMDB Spotlight.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FA89C4C30E2DD4652732196 /* Gzip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Gzip.c; sourceTree = "<group>"; };
 		EB3FC8EBC13382AA15BD22C3 /* TMDBSpotlightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBSpotlightApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -29,7 +31,7 @@
 		6DCA8C9A84E5165DCD822C79 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				778C2F1924CDCBA2566F9790 /* TMDBSpotlight.app */,
+				778C2F1924CDCBA2566F9790 /* TMDB Spotlight.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -57,6 +59,7 @@
 		F5E5D60DE296620272BED5B3 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				16DD0A659033076E845C77C5 /* Assets.xcassets */,
 				7657906B9DA503ECFC962A86 /* ContentView.swift */,
 				55DC7A8F286FC0382782F906 /* Info.plist */,
 				EB3FC8EBC13382AA15BD22C3 /* TMDBSpotlightApp.swift */,
@@ -72,6 +75,7 @@
 			buildConfigurationList = 0664ABC43774D45324BA5B7E /* Build configuration list for PBXNativeTarget "TMDBSpotlight" */;
 			buildPhases = (
 				FABE1045AB91910A8E911BB4 /* Sources */,
+				19B2D0155A7653DC17F2C01B /* Resources */,
 			);
 			buildRules = (
 			);
@@ -81,7 +85,7 @@
 			packageProductDependencies = (
 			);
 			productName = TMDBSpotlight;
-			productReference = 778C2F1924CDCBA2566F9790 /* TMDBSpotlight.app */;
+			productReference = 778C2F1924CDCBA2566F9790 /* TMDB Spotlight.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -92,8 +96,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = 21384CC856C1DDD24303DE81 /* Build configuration list for PBXProject "TMDBSpotlight" */;
 			developmentRegion = en;
@@ -113,6 +115,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		19B2D0155A7653DC17F2C01B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D9DBCFBAF75640EDD2330B3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FABE1045AB91910A8E911BB4 /* Sources */ = {
@@ -135,18 +148,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = TPFLJ6KV49;
 				ENABLE_APP_SANDBOX = YES;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "TMDB Spotlight";
 				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = "$(inherited) -lz";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lz",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tinycast.tmdbspotlight;
 				PRODUCT_NAME = "TMDB Spotlight";
 				SDKROOT = iphoneos;
@@ -207,7 +224,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -264,7 +281,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -280,18 +297,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = TPFLJ6KV49;
 				ENABLE_APP_SANDBOX = YES;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "TMDB Spotlight";
 				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = "$(inherited) -lz";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lz",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tinycast.tmdbspotlight;
 				PRODUCT_NAME = "TMDB Spotlight";
 				SDKROOT = iphoneos;

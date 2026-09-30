@@ -1,7 +1,7 @@
 import Foundation
 import OSLog
 
-final class DiagnosticLog {
+final class DiagnosticLog: @unchecked Sendable {
     private let lock = NSLock()
     private let osLogger = Logger(subsystem: "com.tinycast.tmdbspotlight", category: "indexing")
     private let fileURL: URL
