@@ -137,11 +137,11 @@ async function handleRequest(request, env, ctx) {
 
   try {
     const dimensions = route.size === "portrait" ? { width: 180, height: 270 } : { width: 180, height: 180 };
-    const transformed = await env.IMAGES
+    const image = await env.IMAGES
       .input(upstream.body)
       .transform({ ...dimensions, fit: "cover", blur: 15 })
-      .output({ format: "image/jpeg", quality: 65 })
-      .response();
+      .output({ format: "image/jpeg", quality: 65 });
+    const transformed = image.response();
     if (!transformed.ok || !transformed.body) {
       log("transform_failed", { provider: route.providerName, status: transformed.status });
       return errorResponse(502, "Poster transform failed");
