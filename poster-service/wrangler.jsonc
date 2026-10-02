@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "skylights-posters",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-02",
+  "cache": {
+    "enabled": true
+  },
+  "images": {
+    "binding": "IMAGES"
+  },
+  "r2_buckets": [
+    {
+      "binding": "POSTERS",
+      "bucket_name": "skylights-poster-cache"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
