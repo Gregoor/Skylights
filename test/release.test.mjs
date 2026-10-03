@@ -1,7 +1,7 @@
 // The release's decisions — the ones that are expensive or silent when they go wrong.
 //
 //   - what a manifest may contain (it once published the build machine's paths);
-//   - when to rebuild the 199 MB base (every client re-downloads it, so the cadence is a cost);
+//   - when to rebuild the base (every client re-downloads it, so the cadence is a cost);
 //   - what a base does to the delta chain (it resets it, and leaving old deltas listed would have
 //     clients regress records to a state that predates the base);
 //   - the order the ratings pass works in, which decides whether a bounded daily budget ever reaches
@@ -13,7 +13,7 @@ import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
 
 import { buildManifest, decideMode, nextDeltas, BASE_REBUILD_DELTAS } from "../Scripts/manifest.mjs";
-import { inBand, MIN_VOTES, RECENT_YEARS } from "../Scripts/band.mjs";
+import { inBand, MIN_VOTES } from "../Scripts/band.mjs";
 import { readResponse } from "../src/omdb.mjs";
 import { buildIndexMain } from "../Scripts/build-index.mjs";
 import { MovieIndex } from "../src/db/loader.mjs";
@@ -105,7 +105,7 @@ const check = (label, ok, extra = "") => {
   // Plan lines are `<key>  votes <n>  <year>  <state>`; the summary line also mentions votes.
   const plan = out.split("\n").filter((l) => /^\s*(movie|tv):\d+\s+votes/.test(l))
     .map((l) => l.trim().split(/\s+/)[0]);
-  const summary = out.split("\n").find((l) => l.includes("outside the index band")) ?? "";
+  const summary = out.split("\n").find((l) => l.includes("outside the index rule")) ?? "";
 
   check("unrated records come first, most-voted first",
     plan.slice(0, 2).join(",") === "movie:2,movie:1", plan.join(","));
@@ -118,26 +118,18 @@ const check = (label, ok, extra = "") => {
   check("a freshly-scored record is left alone", !plan.includes("movie:3"), plan.join(","));
   check("a record with no IMDb id is never asked about", !plan.includes("movie:6"), plan.join(","));
   check("a record outside the index band is never asked about", !plan.includes("movie:7"), plan.join(","));
-  check("the skipped count is reported", summary.includes("outside the index band"), summary);
+  check("the count outside the index rule is reported", summary.includes("outside the index rule"), summary);
 }
 
 // ── the band the published index covers ─────────────────────────────────────────────────────────
-// A deliberate content decision, not an optimisation detail: it is why the base is 20.7 MB instead of
-// 190 MB, and what it leaves out is a title under MIN_VOTES that is older than RECENT_YEARS.
+// A deliberate content decision: keep titles with five TMDB votes or a Rotten Tomatoes/IMDb score.
 {
-  const Y = 2026; // injected, so the rule is testable without waiting for the calendar
-  check(`exactly ${MIN_VOTES} votes is in`, inBand({ voteCount: MIN_VOTES, year: 1990 }, { year: Y }));
-  check("...one fewer is out", !inBand({ voteCount: MIN_VOTES - 1, year: 1990 }, { year: Y }));
-  check("a release from this year with a single vote is in",
-    inBand({ voteCount: 1, year: Y }, { year: Y }));
-  check(`...as is last year's`, inBand({ voteCount: 1, year: Y - RECENT_YEARS + 1 }, { year: Y }));
-  check("...but one older than that is out",
-    !inBand({ voteCount: 1, year: Y - RECENT_YEARS }, { year: Y }));
-  // An unreleased film has no votes by definition, and it is the one someone is about to search for:
-  // recency carries it, whatever the export's long tail of zero-vote entries costs with it.
-  check("a recent title nobody has seen is in", inBand({ voteCount: 0, year: Y }, { year: Y }));
-  check("...and so is one from a year not reached yet", inBand({ voteCount: 0, year: Y + 1 }, { year: Y }));
-  check("a record with neither a year nor votes is out", !inBand({ title: "no fields" }, { year: Y }));
+  check(`exactly ${MIN_VOTES} votes is in`, inBand({ voteCount: MIN_VOTES }));
+  check("...one fewer is out", !inBand({ voteCount: MIN_VOTES - 1 }));
+  check("a low-vote title with an RT score is in", inBand({ voteCount: 1, rtScore: 75 }));
+  check("a low-vote title with an IMDb score is in", inBand({ voteCount: 1, imdbRating: 82 }));
+  check("a zero score still counts as a present RT score", inBand({ voteCount: 0, rtScore: 0 }));
+  check("a record with no qualifying votes or scores is out", !inBand({ title: "no fields", year: 2026 }));
 
   // The builders must apply it — a predicate nothing uses would guard nothing.
   const bdir = resolve(tmpdir(), "tmdb-band");
@@ -145,7 +137,7 @@ const check = (label, ok, extra = "") => {
   mkdirSync(bdir, { recursive: true });
   const rows = [
     { mediaType: "movie", id: 1, title: "Popular", originalTitle: "Popular", year: 1999, voteCount: 500, posterPath: "" },
-    { mediaType: "movie", id: 2, title: "Recent", originalTitle: "Recent", year: Y, voteCount: 1, posterPath: "" },
+    { mediaType: "movie", id: 2, title: "Scored", originalTitle: "Scored", year: 1990, voteCount: 1, rtScore: 65, posterPath: "" },
     { mediaType: "movie", id: 3, title: "Obscure", originalTitle: "Obscure", year: 1999, voteCount: 2, posterPath: "" },
   ];
   writeFileSync(join(bdir, "records.ndjson"), rows.map((r) => JSON.stringify(r)).join("\n") + "\n");

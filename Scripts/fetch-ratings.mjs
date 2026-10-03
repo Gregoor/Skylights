@@ -36,11 +36,9 @@ const outDir = argValue("--out=") ?? "data";
 const top = Number(argValue("--top=") ?? 5000);
 const maxRequests = Number(argValue("--max-requests=") ?? 1000);
 const refreshDays = Number(argValue("--refresh-days=") ?? 30);
-// Target exactly what the published index holds (Scripts/band.mjs): Rotten Tomatoes and Metacritic
-// only review titles anyone has heard of, so spending quota on the 1.33M records the index leaves out
-// buys nothing — neither a score nor a search result. Derived from the band rather than a separate
-// threshold, because a floor of its own disagreed with it: it skipped recent titles that a first score
-// could still arrive for.
+// Target titles in the published index plus recent releases that might earn their first RT/Metacritic
+// score. A score makes a low-vote title indexable, so keep checking recent titles even before they
+// qualify; old titles with no score are unlikely to gain one and do not spend the limited quota.
 const rps = Number(argValue("--requests-per-second=") ?? 5);
 const DAY = 24 * 60 * 60 * 1000;
 const now = Date.now();
@@ -59,6 +57,7 @@ const canChange = (rec) =>
   rec.rtScore != null || rec.metacriticScore != null || (rec.year ?? 0) >= thisYear - 1;
 const isStale = (rec) =>
   !rec.ratingsAt || (canChange(rec) && rec.ratingsAt < now - staleAfter(rec) * DAY);
+const canQualifyWithRating = (rec) => inBand(rec) || (rec.year ?? 0) >= thisYear - 1;
 
 const store = readStore(outDir);
 
@@ -69,7 +68,7 @@ const store = readStore(outDir);
 // budget re-checked the same popular titles for ever and never reached the tail.
 const queue = [...store.entries()]
   .filter(([, rec]) => (rec.imdbId ?? "").trim())
-  .filter(([, rec]) => inBand(rec))
+  .filter(([, rec]) => canQualifyWithRating(rec))
   .filter(([, rec]) => isStale(rec))
   .sort((a, b) => {
     const aRated = a[1].ratingsAt ?? 0;
@@ -81,7 +80,7 @@ const queue = [...store.entries()]
   .slice(0, top);
 
 const outsideBand = [...store.values()].filter((r) => !inBand(r)).length;
-console.log(`store ${store.size}; ${outsideBand} outside the index band (skipped); candidates ${queue.length}; budget ${maxRequests}`);
+console.log(`store ${store.size}; ${outsideBand} outside the index rule; candidates ${queue.length}; budget ${maxRequests}`);
 if (process.argv.includes("--dry-run")) {
   for (const [recordKey, rec] of queue.slice(0, 10)) {
     const state = rec.ratingsAt ? `rated ${Math.round((now - rec.ratingsAt) / DAY)}d ago` : "unrated";

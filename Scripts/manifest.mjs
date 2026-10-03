@@ -23,7 +23,7 @@ export function buildManifest({ prev, base, deltas, bundle, store, files = [] })
 
 /// Delta or base for this run.
 ///
-/// A base is 199 MB and every client re-downloads it the moment its hash changes, because a delta is
+/// A base was 74.5 MB for the Oct 2, 2026 store snapshot and every client re-downloads it the moment its hash changes, because a delta is
 /// only valid over the base it was built on — so this decision is a client's download cost, not an
 /// implementation detail. Cold cache first: without a published marker there is nothing to diff a
 /// delta against and the run would otherwise ship the whole corpus as one.

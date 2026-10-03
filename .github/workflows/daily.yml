@@ -1,6 +1,6 @@
 name: Daily index
 
-# Keeps the TMDB index current without re-downloading 140 MB: each day emits a small delta (the
+# Keeps the TMDB index current without re-downloading the ~144 MB store backup: each day emits a small delta (the
 # records that changed), and once a week the base is rebuilt from the full store and the deltas it
 # folds in are pruned. The metadata store is carried across runs in the Actions cache; because that
 # cache evicts after 7 idle days, the store is also published as a release asset and restored from it
@@ -66,11 +66,11 @@ jobs:
       - name: Decide delta vs base
         id: mode
         run: |
-          # A base is 199 MB and every client re-downloads it, so it is rebuilt only when it must be:
+          # A base was 74.5 MB for the Oct 2 store snapshot and every client re-downloads it, so it is rebuilt only when it must be:
           # on a cold cache (no `published.json`, so there is nothing to diff against), on request, or
           # once the delta chain has grown long enough to be worth compacting. A delta can only be
           # applied to the base it was built on, so this cadence is what a client's download costs —
-          # weekly would be ~4 GB/year per client, monthly ~2.4 GB, and a day is ~1 MB.
+          # weekly is ~3.9 GB/year per client, monthly ~900 MB, and a day is ~1 MB.
           DELTAS=$(curl -sL --max-time 60 \
             "https://github.com/${{ github.repository }}/releases/latest/download/manifest.json" \
             | python3 -c "import sys,json; print(len(json.load(sys.stdin).get('deltas') or []))" \

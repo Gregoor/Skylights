@@ -14,7 +14,7 @@ Choose an iOS Simulator or a signed iPhone and run the `TMDBSpotlight` scheme. T
 
 ## Indexing limits and diagnostics
 
-Core Spotlight controls storage, ranking, eviction, and when submitted items become visible. The app defaults to 30,000 titles, ranked by vote count then TMDB popularity, and submits 250 items per call. The cap is adjustable up to 150,000. These are app-side guardrails, not guarantees about Apple's private Spotlight capacity. A successful submission means Core Spotlight accepted the call; the app cannot inspect the private index or guarantee every result appears in search.
+Core Spotlight controls storage, ranking, eviction, and when submitted items become visible. The app defaults to indexing all titles in the published TMDB index, ranked by vote count then TMDB popularity, and submits 250 items per call. You can turn off full indexing and set a cap from 1,000 to 150,000 titles. These are app-side guardrails, not guarantees about Apple's private Spotlight capacity. A successful submission means Core Spotlight accepted the call; the app cannot inspect the private index or guarantee every result appears in search.
 
 The app persists a compact binary-plist snapshot in Application Support: merged rows, the base SHA-256, applied delta hashes, and the set of Spotlight identifiers. Daily/manual refreshes fetch the manifest and only deltas absent from that snapshot. If GitHub publishes a new base, a foreground sync rebuilds from that base and its deltas; a background run logs that a foreground rebuild is needed. Rebuilds resume from their last accepted 250-item batch after interruption.
 

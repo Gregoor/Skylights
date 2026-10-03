@@ -12,8 +12,7 @@ index, searches it locally in JavaScriptCore, and hands the launcher ~10 candida
 
 ## Layout
 
-The index is **not committed** (~140 MB is past GitHub's 100 MB committed-file limit). It ships on a
-rolling `latest` GitHub Release:
+The binary index is generated from the metadata store and ships on a rolling `latest` GitHub Release:
 
 ```
 manifest.json            version + each asset's name, bytes and sha256
@@ -60,24 +59,18 @@ emitting it would churn the deltas for nothing.
 
 ## What the index covers
 
-The **store** is complete — every record ships in `store.ndjson.gz` — but the **index** is what a
-client downloads and holds resident, so it carries what anyone would search rather than all 1.48M
-records (`Scripts/band.mjs`):
+The store backup ships with every unique record from its snapshot; the index is what a client downloads
+and holds resident. It keeps records matching this rule (`Scripts/band.mjs`):
 
 ```
-anything with >= 10 votes, or released this year or last, however many votes it has
+at least 5 TMDB votes, or a Rotten Tomatoes score, or an IMDb score
 ```
 
-Measured against this corpus: 436,363 rows kept, 1,783,820 left out — and **not one of the dropped
-records had a Rotten Tomatoes score**, because RT/Metacritic only review titles that have an audience.
-The index falls from 189.9 MB to 20.7 MB, the loader's resident set from ~150 MB to ~60 MB, and query
-p99 from 42 ms to 8 ms.
-
-Recent titles are kept whether or not anyone has voted for them, because an unreleased film has no
-votes by definition and it is exactly the one someone searches for the week it comes out. That admits
-the export's zero-vote long tail — 114k entries in two years — which is the price of never missing a
-new release. Dropping a record here is reversible and costs nothing: the store keeps it, so a later
-base rebuild can bring it back.
+In the October 2, 2026 release snapshot, the store resolves to 1,486,823 unique movie and TV records.
+This rule keeps 568,194 of them. The resulting base index is 74.5 MB. Records outside the rule stay in
+the store and can return to the index if a later update adds enough votes or a score.
+The Daily index workflow publishes this base; both the Tinycast provider and TMDB Spotlight app read
+the same rolling release manifest and delta chain.
 
 ## Languages and the entity map
 
@@ -183,18 +176,18 @@ design.
 So the index is downloaded with **curl through the process shim**, streaming straight to disk. The
 fetch path can't do that: the runtime's fetch polyfill is refused by the provider bridge, and a bare
 `fetch` only works where JavaScriptCore supplies a native one — which buffers the whole body in
-memory, the last thing a 140 MB index needs.
+memory, the last thing a large index download needs.
 
 The transport is isolated in one `download(url, path)` function, so swapping it (say, for a future
 host-side sync) touches nothing in the sync, format or merge logic.
 
 ## The index format (`src/db/index-format.mjs`)
 
-One little-endian binary file (v4): a 128-byte header, per-row records (37 B), a sorted term table
+One little-endian binary file (v5): a 128-byte header, per-row records (40 B), a sorted term table
 (offsets + packed UTF-8 + postings ranges), a flat postings array, title/original/poster pools, and a
 superseded-keys section (empty for a base). A row carries tmdbID, title/original offsets, year, imdb
 id, popularity, vote count, poster offset and media type (0 movie, 1 TV). The loader keeps only the
-inverted index in memory (~30 MB); the pools stay on disk and are paged per query.
+inverted index in memory; the pools stay on disk and are paged per query.
 
 ## Running it
 
