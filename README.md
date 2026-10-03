@@ -66,9 +66,9 @@ and holds resident. It keeps records matching this rule (`Scripts/band.mjs`):
 at least 5 TMDB votes, or a Rotten Tomatoes score, or an IMDb score
 ```
 
-In the October 2, 2026 release snapshot, the store resolves to 1,486,823 unique movie and TV records.
-This rule keeps 568,194 of them. The resulting base index is 74.5 MB. Records outside the rule stay in
-the store and can return to the index if a later update adds enough votes or a score.
+In the October 3, 2026 CI build, 1,485,581 live records matched the current TMDB ID export; this rule
+kept 567,877. The resulting base index is 78.1 MB (74.5 MiB). Records outside the rule stay in the
+store and can return to the index if a later update adds enough votes or a score.
 The Daily index workflow publishes this base; both the Tinycast provider and TMDB Spotlight app read
 the same rolling release manifest and delta chain.
 
