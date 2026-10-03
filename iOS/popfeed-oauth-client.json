@@ -2,7 +2,7 @@
   "client_id": "https://cdn.jsdelivr.net/gh/Gregoor/Skylights@main/iOS/popfeed-oauth-client.json",
   "client_name": "Skylights",
   "application_type": "native",
-  "redirect_uris": ["com.githubusercontent.raw:/oauth/callback"],
+  "redirect_uris": ["net.jsdelivr.cdn:/oauth/callback"],
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
   "scope": "atproto repo:social.popfeed.feed.review repo:social.popfeed.feed.list repo:social.popfeed.feed.listItem",
