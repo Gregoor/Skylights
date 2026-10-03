@@ -1,5 +1,5 @@
 {
-  "client_id": "https://raw.githubusercontent.com/Gregoor/Skylights/main/iOS/popfeed-oauth-client.json",
+  "client_id": "https://cdn.jsdelivr.net/gh/Gregoor/Skylights@main/iOS/popfeed-oauth-client.json",
   "client_name": "Skylights",
   "application_type": "native",
   "redirect_uris": ["com.githubusercontent.raw:/oauth/callback"],
