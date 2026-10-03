@@ -1,0 +1,11 @@
+{
+  "client_id": "https://raw.githubusercontent.com/Gregoor/Skylights/main/iOS/popfeed-oauth-client.json",
+  "client_name": "Skylights",
+  "application_type": "native",
+  "redirect_uris": ["com.githubusercontent.raw:/oauth/callback"],
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "scope": "atproto repo:social.popfeed.feed.review repo:social.popfeed.feed.list repo:social.popfeed.feed.listItem",
+  "token_endpoint_auth_method": "none",
+  "dpop_bound_access_tokens": true
+}
