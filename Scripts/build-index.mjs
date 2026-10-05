@@ -66,7 +66,7 @@ export async function buildIndexMain(storeDir, outPath, { verbose = true } = {})
   const indexed = kept.filter((record) => inBand(record));
   if (verbose) {
     console.log(`band: ${indexed.length} rows kept, ${kept.length - indexed.length} left out ` +
-      `(under ${MIN_VOTES} votes and no Rotten Tomatoes or IMDb score)`);
+      `(under ${MIN_VOTES} votes and no Rotten Tomatoes, Metacritic, or IMDb score)`);
   }
 
   return buildIndexFromRecords(indexed, outPath, { verbose });

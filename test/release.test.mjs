@@ -122,10 +122,11 @@ const check = (label, ok, extra = "") => {
 }
 
 // ── the band the published index covers ─────────────────────────────────────────────────────────
-// A deliberate content decision: keep titles with five TMDB votes or a Rotten Tomatoes/IMDb score.
+// A deliberate content decision: keep titles with five TMDB votes or a professional/user rating.
 {
   check(`exactly ${MIN_VOTES} votes is in`, inBand({ voteCount: MIN_VOTES }));
   check("...one fewer is out", !inBand({ voteCount: MIN_VOTES - 1 }));
+  check("...a Metacritic score admits a low-vote title", inBand({ voteCount: 1, metacriticScore: 72 }));
   check("a low-vote title with an RT score is in", inBand({ voteCount: 1, rtScore: 75 }));
   check("a low-vote title with an IMDb score is in", inBand({ voteCount: 1, imdbRating: 82 }));
   check("a zero score still counts as a present RT score", inBand({ voteCount: 0, rtScore: 0 }));

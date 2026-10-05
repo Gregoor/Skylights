@@ -69,7 +69,7 @@ The store backup ships with every unique record from its snapshot; the index is 
 and holds resident. It keeps records matching this rule (`Scripts/band.mjs`):
 
 ```
-at least 5 TMDB votes, or a Rotten Tomatoes score, or an IMDb score
+at least 5 TMDB votes, or a Rotten Tomatoes score, or a Metacritic score, or an IMDb score
 ```
 
 In the October 3, 2026 CI build, 1,485,581 live records matched the current TMDB ID export; this rule
@@ -115,12 +115,13 @@ Three sources, stored per row as three bytes in the index (256 = absent):
 |---|---|---|
 | IMDb | their bulk `title.ratings.tsv.gz`, 8.7 MB/day, no key, no rate limit | ~100% of records with an IMDb id |
 | Rotten Tomatoes | OMDb, one title at a time | ~5% of films, ~0% of series |
-| Metacritic | OMDb, same call | ~4% of films, ~0% of series |
+| Metacritic | OMDb, then MDBList by TMDB id | OMDb: ~4% of films, ~0% of series; MDBList backfills missing scores, TV first |
 
 OMDb's Metascore is movie-only — it returns `N/A` for series that Metacritic plainly scores — and its
-RT/Metacritic data reaches only the prominent few thousand, so **IMDb is the rating actually available
-for the corpus**. `Scripts/fetch-ratings.mjs` therefore spends its quota only where RT/Metacritic can
-exist, weighted by vote count and floored at 10 votes.
+RT/Metacritic data reaches only the prominent few thousand. `Scripts/fetch-ratings.mjs` spends its
+quota on likely reviewed titles; `Scripts/fetch-mdblist-ratings.mjs` progressively fills missing
+Metacritic scores against TMDB ids, TV first, within the MDBList daily budget. IMDb remains the broad
+fallback rating.
 
 A row shows `rt` for both media types with `imdb` behind it as a fallback; any combination, in any
 order, is configurable from a `config.json` in the provider's cache directory. Tinycast hands the bundle

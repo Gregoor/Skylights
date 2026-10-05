@@ -151,7 +151,11 @@ for (const [recordKey, rec] of queue) {
   // without it a new score would only reach a client at the next base rebuild instead of that day.
   const stamp = Date.now();
   appendRecord(outDir, {
-    ...rec, imdbRating: imdb, rtScore: rt, metacriticScore: metacritic,
+    ...rec, imdbRating: imdb, rtScore: rt,
+    // An OMDb miss (especially its usual TV-series N/A) must not erase a score already filled from
+    // MDBList. Keep the prior value unless this response contains a real Metascore.
+    metacriticScore: metacritic ?? rec.metacriticScore ?? null,
+    metacriticSource: metacritic !== null ? "omdb" : rec.metacriticSource,
     ratingsAt: stamp, fetchedAt: stamp,
   });
 

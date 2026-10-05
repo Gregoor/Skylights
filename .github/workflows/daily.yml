@@ -123,6 +123,19 @@ jobs:
               --max-requests=${{ vars.OMDB_DAILY_BUDGET || '1000' }} --refresh-days=30
           fi
 
+      - name: Backfill Metacritic ratings from MDBList
+        env:
+          MDBLIST_API_KEY: ${{ secrets.MDBLIST_API_KEY }}
+        run: |
+          if [ -z "$MDBLIST_API_KEY" ]; then
+            echo "no MDBLIST_API_KEY secret — skipping MDBList ratings"
+          else
+            # Use the account's daily quota to fill missing scores, with TV first because OMDb has
+            # no Metascores for series. The append-only store resumes the backfill each day.
+            node Scripts/fetch-mdblist-ratings.mjs --max-requests=${{ vars.MDBLIST_DAILY_BUDGET || '10000' }} \
+              --refresh-days=30
+          fi
+
       - name: Build delta index
         if: steps.mode.outputs.mode == 'delta'
         run: node Scripts/build-delta.mjs data "build/delta-$(date -u +%F).index"
