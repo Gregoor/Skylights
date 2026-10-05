@@ -85,13 +85,12 @@ const deltas = nextDeltas({
 });
 const bundle = assetInfo(bundlePath, "movies.provider.js");
 const store = storeArg ? assetInfo(storeArg, "store.ndjson.gz") : prev?.store ?? null;
-
 const manifest = buildManifest({ prev, base, deltas, bundle, store });
 
 // Upload first, then the manifest — so a client never sees a manifest whose assets are missing.
 const uploads = [];
-if (baseArg) uploads.push(gzipped(baseArg));
-if (deltaArg) uploads.push(gzipped(resolve(deltaArg)));
+if (baseArg) uploads.push(gzipped(baseArg), resolve(baseArg));
+if (deltaArg) uploads.push(gzipped(resolve(deltaArg)), resolve(deltaArg));
 uploads.push(bundle.local);
 if (storeArg) uploads.push(resolve(storeArg));
 gh(["release", "upload", TAG, ...uploads, "--clobber"]);
@@ -124,7 +123,8 @@ if (missing.length > 0) {
 }
 
 // Prune assets the new manifest no longer references (deltas folded into a fresh base).
-const keep = new Set([MANIFEST, base?.name, bundle.name, store?.name, ...deltas.map((d) => d.name)].filter(Boolean));
+const keep = new Set([MANIFEST, base?.name, bundle.name, store?.name,
+  ...deltas.map((d) => d.name)].filter(Boolean));
 // An asset travels under `<name>.gz` while the manifest names `<name>`, so a keep list built from the
 // manifest's names does not match what the release holds. Every delta published since assets started
 // travelling that way was deleted by the prune of the very run that uploaded it, with the manifest left

@@ -65,7 +65,11 @@ for (const e of exportEntries) {
 // 3. Rolling re-fetch of the stalest records, skipping the ones we just refreshed above.
 const stalest = [...store.values()]
   .filter((r) => !retitled.has(key(r.mediaType, r.id)))
-  .sort((a, b) => (a.fetchedAt ?? 0) - (b.fetchedAt ?? 0))
+  .sort((a, b) => {
+    const needsSeasonCount = (r) => r.mediaType === "tv" && !Number.isInteger(r.seasonCount);
+    if (needsSeasonCount(a) !== needsSeasonCount(b)) return needsSeasonCount(a) ? -1 : 1;
+    return (a.fetchedAt ?? 0) - (b.fetchedAt ?? 0);
+  })
   .slice(0, refetchLimit)
   .map((r) => ({ mediaType: r.mediaType, id: r.id }));
 

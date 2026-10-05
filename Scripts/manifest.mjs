@@ -1,3 +1,5 @@
+import { VERSION as INDEX_FORMAT_VERSION } from "../src/db/index-format.mjs";
+
 // The shape the rolling release publishes. Kept out of publish.mjs so it can be tested without a
 // GitHub release behind it — publish.mjs runs on import.
 
@@ -13,6 +15,7 @@ export function buildManifest({ prev, base, deltas, bundle, store, files = [] })
   return {
     version: (prev?.version ?? 0) + 1,
     generatedAt: new Date().toISOString(),
+    indexFormatVersion: INDEX_FORMAT_VERSION,
     base: published(base),
     deltas: deltas.map(published),
     bundle: published(bundle),
@@ -29,8 +32,9 @@ export function buildManifest({ prev, base, deltas, bundle, store, files = [] })
 /// delta against and the run would otherwise ship the whole corpus as one.
 export const BASE_REBUILD_DELTAS = 30;
 
-export function decideMode({ hasMarker, requested = "", deltas = 0 }) {
+export function decideMode({ hasMarker, requested = "", deltas = 0, publishedFormatVersion = 0 }) {
   if (!hasMarker) return "base";
+  if (publishedFormatVersion !== INDEX_FORMAT_VERSION) return "base";
   if (requested === "base") return "base";
   if (deltas >= BASE_REBUILD_DELTAS) return "base";
   return "delta";

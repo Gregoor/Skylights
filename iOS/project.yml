@@ -1,0 +1,93 @@
+name: Skylights
+options:
+  bundleIdPrefix: com.tinycast
+  deploymentTarget:
+    iOS: "26.0"
+packages:
+  zstd:
+    url: https://github.com/facebook/zstd.git
+    from: 1.5.7
+targets:
+  Skylights:
+    type: application
+    platform: iOS
+    sources:
+      - App
+      - App/Assets.xcassets
+      - Core
+    dependencies:
+      - package: zstd
+        product: libzstd
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tinycast.tmdbspotlight
+        PRODUCT_NAME: Skylights
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_KEY_CFBundleDisplayName: Skylights
+        DEVELOPMENT_TEAM: TPFLJ6KV49
+        CODE_SIGN_IDENTITY: iPhone Developer
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads: NO
+        SWIFT_VERSION: 5.0
+        IPHONEOS_DEPLOYMENT_TARGET: 26.0
+        OTHER_LDFLAGS: "$(inherited) -lz"
+        SWIFT_OBJC_BRIDGING_HEADER: Core/Gzip.h
+        ENABLE_APP_SANDBOX: YES
+    info:
+      path: App/Info.plist
+      properties:
+        UIApplicationSupportsIndirectInputEvents: true
+        NSUserActivityTypes:
+          - com.apple.corespotlightitem
+        CFBundleURLTypes:
+          - CFBundleURLName: net.jsdelivr.cdn
+            CFBundleURLSchemes:
+              - net.jsdelivr.cdn
+        UIBackgroundModes:
+          - fetch
+          - processing
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.tinycast.tmdbspotlight.refresh
+          - com.tinycast.tmdbspotlight.processing
+          - com.tinycast.tmdbspotlight.full-index
+  SkylightsMac:
+    type: application
+    platform: macOS
+    sources:
+      - path: App/ContentView.swift
+      - path: App/SkylightsApp.swift
+      - path: App/Assets.xcassets
+      - path: Core
+    dependencies:
+      - package: zstd
+        product: libzstd
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tinycast.skylights.mac
+        DEVELOPMENT_TEAM: TPFLJ6KV49
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: Apple Development
+        PRODUCT_NAME: Skylights
+        INFOPLIST_KEY_CFBundleDisplayName: Skylights
+        ASSETCATALOG_COMPILER_APPICON_NAME: MacAppIcon
+        MACOSX_DEPLOYMENT_TARGET: 15.0
+        SWIFT_VERSION: 5.0
+        OTHER_LDFLAGS: "$(inherited) -lz"
+        SWIFT_OBJC_BRIDGING_HEADER: Core/Gzip.h
+        ENABLE_APP_SANDBOX: YES
+        CODE_SIGN_ENTITLEMENTS: Mac/SkylightsMac.entitlements
+    info:
+      path: Mac/Info.plist
+      properties:
+        CFBundleDisplayName: Skylights
+        LSMultipleInstancesProhibited: true
+        CFBundleURLTypes:
+          - CFBundleURLName: net.jsdelivr.cdn
+            CFBundleURLSchemes:
+              - net.jsdelivr.cdn
+          - CFBundleURLName: com.tinycast.skylights.spotlight
+            CFBundleURLSchemes:
+              - skylights
+        NSUserActivityTypes:
+          - com.apple.corespotlightitem

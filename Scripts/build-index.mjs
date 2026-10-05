@@ -7,8 +7,9 @@
 // Normalizes each title/original-title to folded terms and writes the shared inverted-index format.
 // Runs under Node only (a build step); the artifact it writes is what runs in JavaScriptCore.
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, openSync, writeSync, closeSync } from "node:fs";
 import { resolve, dirname } from "node:path";
+import { createHash } from "node:crypto";
 
 import { foldText, tokenize } from "../src/movies/normalize.mjs";
 import { serializeIndex, ratingByte } from "../src/db/index-format.mjs";
@@ -90,6 +91,7 @@ export async function buildIndexFromRecords(records, outPath, { supersededKeys =
   const rtVals = [];
   const metacriticVals = [];
   const imdbRatingVals = [];
+  const seasonCounts = [];
 
   const ingest = (folded, row) => {
     for (const w of tokenize(folded)) {
@@ -117,6 +119,7 @@ export async function buildIndexFromRecords(records, outPath, { supersededKeys =
     rtVals.push(ratingByte(rec.rtScore));
     metacriticVals.push(ratingByte(rec.metacriticScore));
     imdbRatingVals.push(ratingByte(rec.imdbRating));
+    seasonCounts.push(Math.max(0, Math.min(65535, Number(rec.seasonCount) || 0)));
     titles.push(title);
     const original = rec.originalTitle || "";
     originals.push(original);
@@ -204,6 +207,7 @@ export async function buildIndexFromRecords(records, outPath, { supersededKeys =
       rtScore: rtVals[r],
       metacriticScore: metacriticVals[r],
       imdbRating: imdbRatingVals[r],
+      seasonCount: seasonCounts[r],
     };
     titleOff += tenc.length;
     origOff += oenc.length;
@@ -224,12 +228,64 @@ export async function buildIndexFromRecords(records, outPath, { supersededKeys =
 
   mkdirSync(dirname(resolvedOut), { recursive: true });
   writeFileSync(resolvedOut, Buffer.from(indexBytes));
-  const sizeMB = (indexBytes.length / 1048576).toFixed(1);
+  const streamLength = writeSpotlightStream(records, supersededKeys, resolvedOut);
+  const fields = Buffer.alloc(16);
+  fields.writeBigUInt64LE(BigInt(indexBytes.length), 0);
+  fields.writeBigUInt64LE(BigInt(streamLength), 8);
+  const fd = openSync(resolvedOut, "r+");
+  writeSync(fd, fields, 0, fields.length, 112);
+  closeSync(fd);
+  const fullBytes = indexBytes.length + streamLength;
   if (verbose) {
     console.log(
-      `wrote ${resolvedOut} (${sizeMB} MB, ${rowCount} rows, ${sortedTerms.length} terms, ${pi} postings)`);
+      `wrote ${resolvedOut} (${(fullBytes / 1048576).toFixed(1)} MB, ${rowCount} rows, ${sortedTerms.length} terms, ${pi} postings)`);
   }
-  return { rows: rowCount, terms: sortedTerms.length, postings: pi, bytes: indexBytes.length };
+  return { rows: rowCount, terms: sortedTerms.length, postings: pi, bytes: fullBytes };
+}
+
+/// Appends checksummed replayable row operations to the same asset Tinycast searches.
+function writeSpotlightStream(records, supersededKeys, path) {
+  const fd = openSync(resolve(path), "a");
+  let bytes = 0;
+  let sequence = 0;
+  let operations = [];
+  const flush = () => {
+    if (!operations.length) return;
+    const body = Buffer.from(JSON.stringify({ sequence: sequence++, operations }));
+    const hash = createHash("sha256").update(body).digest("hex");
+    bytes += writeSync(fd, `${hash}\t${body.toString("utf8")}\n`);
+    operations = [];
+  };
+  const push = (operation) => {
+    operations.push(operation);
+    if (operations.length === 250) flush();
+  };
+  for (const stable of supersededKeys) {
+    const mediaType = (stable & 1) ? "tv" : "movie";
+    push({ id: `${mediaType}-${Math.floor(stable / 2)}`, row: null });
+  }
+  for (const rec of records) {
+    const mediaType = MEDIA_TYPE[rec.mediaType] ?? 0;
+    const row = {
+      id: Number(rec.id) || 0,
+      mediaType,
+      title: rec.title || rec.originalTitle || "",
+      original: rec.originalTitle || "",
+      year: Number(rec.year) || 0,
+      imdbNum: imdbNum(rec.imdbId),
+      popularity: Number(rec.popularity) || 0,
+      votes: Number(rec.voteCount) || 0,
+      rt: ratingByte(rec.rtScore),
+      metacritic: ratingByte(rec.metacriticScore),
+      imdb: ratingByte(rec.imdbRating),
+      posterPath: rec.posterPath || "",
+      seasonCount: Number(rec.seasonCount) || 0,
+    };
+    push({ id: `${mediaType === 0 ? "movie" : "tv"}-${row.id}`, row });
+  }
+  flush();
+  closeSync(fd);
+  return bytes;
 }
 
 /// Concatenate a list of Uint8Array chunks into one Uint8Array.

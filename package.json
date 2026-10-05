@@ -13,7 +13,7 @@
     "build-delta": "node Scripts/build-delta.mjs",
     "build-provider": "node Scripts/build-provider.mjs",
     "update": "npm run fetch-exports && npm run daily-update && npm run build-index && npm run build-provider",
-    "test": "node test/smoke.mjs && node test/delta.test.mjs && node test/sync.test.mjs && node test/provider.test.mjs && node test/groups.test.mjs && node test/wikipedia-provider.test.mjs && node test/popularity.test.mjs && node test/wikipedia-delta.test.mjs && node test/normalize.test.mjs && node test/loader.test.mjs && node test/release.test.mjs",
+    "test": "node test/smoke.mjs && node test/delta.test.mjs && node tinycast/test/sync.test.mjs && node tinycast/test/provider.test.mjs && node test/groups.test.mjs && node tinycast/test/wikipedia-provider.test.mjs && node test/popularity.test.mjs && node test/wikipedia-delta.test.mjs && node test/normalize.test.mjs && node test/loader.test.mjs && node test/release.test.mjs",
     "test:rank": "node test/rank.test.mjs build/tmdb.index",
     "ratings": "node --env-file=.env Scripts/fetch-ratings.mjs",
     "imdb-ratings": "node Scripts/fetch-imdb-ratings.mjs"

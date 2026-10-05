@@ -16,8 +16,8 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const sources = [
-  { id: "movies", entry: "src/provider.js" },
-  { id: "wikipedia", entry: "src/wikipedia/provider.js", assets: ["wikipedia.png"] },
+  { id: "movies", entry: "tinycast/movies/provider.js" },
+  { id: "wikipedia", entry: "tinycast/wikipedia/provider.js", assets: ["wikipedia.png"] },
 ];
 
 let failed = false;
@@ -56,7 +56,7 @@ for (const source of sources) {
   // A provider's row icon has to sit beside its bundle: that directory is all the host will resolve a
   // candidate's `iconPath` against.
   for (const name of source.assets ?? []) {
-    await copyFile(resolve(root, "assets", name), resolve(root, "build", name));
+    await copyFile(resolve(root, "tinycast/assets", name), resolve(root, "build", name));
   }
   console.log(`wrote ${outfile}`);
 }

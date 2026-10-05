@@ -10,7 +10,13 @@ index, searches it locally in JavaScriptCore, and hands the launcher ~10 candida
 > runtime, on the reduced `@tinycast/api` module that runtime hands a provider, and on the process
 > shim for its downloads. It must not be listed in the Raycast store or any registry catalog.
 
-## Layout
+## Repository layout
+
+- Root `Scripts/`, `src/`, `data/`, and `build/` hold the CI index pipeline and its inputs/outputs.
+- `tinycast/` holds Tinycast provider entry points, runtime glue, assets, and provider tests.
+- `ios/` holds the Skylights Xcode project directly, with no extra app-name directory.
+
+## Published release layout
 
 The binary index is generated from the metadata store and ships on a rolling `latest` GitHub Release:
 
@@ -24,7 +30,7 @@ wikipedia-<lang>.index   one index per wiki, each with its own manifest
 wikipedia.provider.js    the built provider (source lives here in git)
 ```
 
-`assets/wikipedia.png` is Wikipedia's own mark, from Wikimedia Commons (CC BY-SA), drawn as the icon of
+`tinycast/assets/wikipedia.png` is Wikipedia's own mark, from Wikimedia Commons (CC BY-SA), drawn as the icon of
 the rows the Wikipedia provider contributes. `Scripts/build-provider.mjs` copies it beside the bundle,
 because the provider's own directory is all the host will resolve a candidate's icon against.
 
@@ -183,11 +189,11 @@ host-side sync) touches nothing in the sync, format or merge logic.
 
 ## The index format (`src/db/index-format.mjs`)
 
-One little-endian binary file (v5): a 128-byte header, per-row records (40 B), a sorted term table
+One little-endian binary file (v6): a 128-byte header, per-row records (42 B), a sorted term table
 (offsets + packed UTF-8 + postings ranges), a flat postings array, title/original/poster pools, and a
 superseded-keys section (empty for a base). A row carries tmdbID, title/original offsets, year, imdb
-id, popularity, vote count, poster offset and media type (0 movie, 1 TV). The loader keeps only the
-inverted index in memory; the pools stay on disk and are paged per query.
+id, popularity, vote count, poster offset, media type (0 movie, 1 TV), and TV season count. The loader keeps only the
+inverted index in memory (~30 MB); the pools stay on disk and are paged per query.
 
 ## Running it
 

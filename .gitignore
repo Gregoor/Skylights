@@ -3,9 +3,14 @@
 
 # local build deps
 node_modules/
-test/jsc/npm/
+tinycast/test/jsc/npm/
 
 # generated: the metadata store, the id export, and the built artifacts
 data/
 build/
 *.index
+
+# local macOS/Xcode metadata
+.DS_Store
+/ios/.xcodeDerivedData/
+/ios/.xcodeDerivedDataMac/

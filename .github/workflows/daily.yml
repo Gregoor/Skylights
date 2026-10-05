@@ -75,12 +75,17 @@ jobs:
             "https://github.com/${{ github.repository }}/releases/latest/download/manifest.json" \
             | python3 -c "import sys,json; print(len(json.load(sys.stdin).get('deltas') or []))" \
             2>/dev/null || echo 0)
+          FORMAT=$(curl -sL --max-time 60 \
+            "https://github.com/${{ github.repository }}/releases/latest/download/manifest.json" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin).get('indexFormatVersion', 0))" \
+            2>/dev/null || echo 0)
           node -e "
             import('./Scripts/manifest.mjs').then((m) => {
               const mode = m.decideMode({
                 hasMarker: require('fs').existsSync('data/published.json'),
                 requested: '${{ inputs.mode }}',
                 deltas: Number('${DELTAS:-0}'),
+                publishedFormatVersion: Number('${FORMAT:-0}'),
               });
               require('fs').appendFileSync(process.env.GITHUB_OUTPUT, \`mode=\${mode}\n\`);
               console.log('mode=' + mode + ' (' + '${DELTAS:-0}' + ' deltas so far)');

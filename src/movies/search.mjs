@@ -77,6 +77,7 @@ export async function searchMovies(indexes, query, { limit = 10, candidatePool =
       title,
       originalTitle: originalTitle || null,
       year: rec.year || null,
+      seasonCount: rec.mediaType === 1 ? rec.seasonCount || 0 : null,
       voteCount: rec.voteCount,
       posterURL,
       mediaType: rec.mediaType === 1 ? "tv" : "movie",

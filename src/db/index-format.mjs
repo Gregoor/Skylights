@@ -4,10 +4,10 @@
 // JS-standard-only — it ships inside the extension bundle and runs in a bare JavaScriptCore context.
 
 export const MAGIC = "TCIDX001";
-export const VERSION = 5;
+export const VERSION = 7;
 
 export const HEADER_BYTES = 128;
-export const ROW_RECORD_BYTES = 40;
+export const ROW_RECORD_BYTES = 42;
 
 // Physical section order (byte offsets live in the header as u64s):
 //   [0] header          HEADER_BYTES fixed
@@ -21,11 +21,12 @@ export const ROW_RECORD_BYTES = 40;
 //   [8] originalPool    originalPoolBytes of UTF-8
 //   [9] posterPool      posterPoolBytes of UTF-8
 //   [10] superseded     supersededCount * u32 stable keys this file replaces (deltas only)
+//   [11] spotlight ops  checksummed JSON row-operation frames; offsets at 112 and 120
 //
-// Row record (37 bytes), indexed by row (postings reference row indices):
+// Row record (42 bytes), indexed by row (postings reference row indices):
 //   u32 tmdbID | u32 titleOffset | u16 titleLength | u32 originalOffset | u16 originalLength |
 //   u16 year (0 unknown) | u32 imdbNum (0 = absent; else the `tt\d+` numeric part) | f32 popularity |
-//   u32 voteCount | u32 posterOffset | u16 posterLength | u8 mediaType (0 = movie, 1 = tv)
+//   u32 voteCount | u32 posterOffset | u16 posterLength | u8 mediaType | u8 scores × 3 | u16 seasonCount
 //
 // The imdb id is stored as the numeric part of `tt{N}` because it is always well-formed or absent in
 // the dataset (Orphan "None" strings are dropped at import). Display subtitle = `${year}` greyed;
@@ -52,6 +53,7 @@ export const ROW_LAYOUT = Object.freeze({
   POSTER_OFFSET: [30, 4],
   POSTER_LENGTH: [34, 2],
   MEDIA_TYPE: [36, 1],
+  SEASON_COUNT: [40, 2],
 });
 
 // u64 section offsets, [offset, byteLength].
@@ -65,6 +67,9 @@ export const SECTIONS = Object.freeze({
   TITLE_POOL: [null, null],
   ORIGINAL_POOL: [null, null],
 });
+
+export const STREAM_OFFSET_FIELD = 112;
+export const STREAM_LENGTH_FIELD = 120;
 
 /// Encode a single row record into `view` (DataView over a big buffer) at byte offset `at`.
 export function encodeRow(view, at, rec) {
@@ -83,6 +88,7 @@ export function encodeRow(view, at, rec) {
   view.setUint8(at + 37, rec.rtScore, true);
   view.setUint8(at + 38, rec.metacriticScore, true);
   view.setUint8(at + 39, rec.imdbRating, true);
+  view.setUint16(at + 40, rec.seasonCount, true);
 }
 
 /// Decode one row record from a DataView at byte offset `at`.
@@ -104,6 +110,7 @@ export function decodeRow(view, at) {
     rtScore: view.getUint8(at + 37),
     metacriticScore: view.getUint8(at + 38),
     imdbRating: view.getUint8(at + 39),
+    seasonCount: view.getUint16(at + 40, true),
   };
 }
 
@@ -211,6 +218,8 @@ export function parseHeader(bytes) {
     offOriginalPool: u64(88),
     offPosterPool: u64(96),
     offSuperseded: u64(108),
+    streamOffset: u64(112),
+    streamLength: u64(120),
   };
 }
 

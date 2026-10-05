@@ -92,6 +92,7 @@ export function recordFromApi(mediaType, api) {
     year: Number(year) || 0,
     popularity: Number(api.popularity) || 0,
     voteCount: Number(api.vote_count) || 0,
+    seasonCount: mediaType === "tv" ? Number(api.number_of_seasons) || 0 : 0,
     posterPath: api.poster_path ?? "",
     imdbId: api.imdb_id ?? "",
     firstSeen: Date.now(),

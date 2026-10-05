@@ -1,0 +1,548 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1429E2C7F4FF91608F2154CF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D730FBA1FBEEC184138B063 /* Assets.xcassets */; };
+		22DE546D2B4D69D422A902CC /* PopfeedOAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D101E4D55F3D20E320208DA /* PopfeedOAuthClient.swift */; };
+		24CDA1C07831E55681F92B24 /* PopfeedArchiveReplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B233D8D8E691B47208123D8 /* PopfeedArchiveReplay.swift */; };
+		2E053AB6F9E535FC3D673BCB /* libzstd in Frameworks */ = {isa = PBXBuildFile; productRef = EECEDFB8BD37FFDB590B7A00 /* libzstd */; };
+		314E8507F5E846F59257F8C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D730FBA1FBEEC184138B063 /* Assets.xcassets */; };
+		345276DABD6C7A40C6A83AEC /* PopfeedRecordSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E68B6044FA38233642DCB33 /* PopfeedRecordSync.swift */; };
+		3F01768DDECFE3756EE1E7D6 /* DiagnosticLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53938E2413C90DD90C7343FC /* DiagnosticLog.swift */; };
+		4D9C6E106743CEAFFCEFFA6E /* SpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A7B3A21B710B47152F9C88 /* SpotlightIndexer.swift */; };
+		620F78AC167B264FD7D3C17B /* PopfeedLiveSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C95132D8FE633DC0CB929E0 /* PopfeedLiveSync.swift */; };
+		632D17D79F6E399EB225EDB9 /* SpotlightRanking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050FF4817412EE3D7F6FCB88 /* SpotlightRanking.swift */; };
+		66654823076F7A2315C8B7BE /* DiagnosticLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53938E2413C90DD90C7343FC /* DiagnosticLog.swift */; };
+		73573D3AFF5B81DA27219529 /* PopfeedArchiveReplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B233D8D8E691B47208123D8 /* PopfeedArchiveReplay.swift */; };
+		7D7828147EBD5C28C2D9E6BD /* SkylightsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92204505E37AD0D21254FDBA /* SkylightsApp.swift */; };
+		7E45E52001C024D75AB79FD8 /* Gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 42E02EDD1A462B0E19D483B6 /* Gzip.c */; };
+		914C1511B1086DE73330D15A /* PopfeedOAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D101E4D55F3D20E320208DA /* PopfeedOAuthClient.swift */; };
+		9C2642730D61D5C4964CC5F7 /* Gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 42E02EDD1A462B0E19D483B6 /* Gzip.c */; };
+		B11A08E845C7B4A6340AEA1C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96E81C22F0BE635746C112C /* ContentView.swift */; };
+		B33DCE6B20A222B80B163335 /* PopfeedLiveSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C95132D8FE633DC0CB929E0 /* PopfeedLiveSync.swift */; };
+		BCC2EAD803AED8AB24ACA6DB /* PopfeedRecordSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E68B6044FA38233642DCB33 /* PopfeedRecordSync.swift */; };
+		C0E9D6BBAA6D59986752656A /* KeychainCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92111EFE9C15748A8886E4D5 /* KeychainCredentialStore.swift */; };
+		CB6C98C1940E953B5B6CBE4F /* SpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A7B3A21B710B47152F9C88 /* SpotlightIndexer.swift */; };
+		D4599ACF50E2471437F84C9B /* KeychainCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92111EFE9C15748A8886E4D5 /* KeychainCredentialStore.swift */; };
+		D626CE1154AB6D3A58D1B215 /* SpotlightRanking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050FF4817412EE3D7F6FCB88 /* SpotlightRanking.swift */; };
+		D72001A6AA00000000000001 /* JetstreamCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72001A6AA00000000000003 /* JetstreamCredentialStore.swift */; };
+		D72001A6AA00000000000002 /* JetstreamCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72001A6AA00000000000003 /* JetstreamCredentialStore.swift */; };
+		E055E83D361CC091AD5A498A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96E81C22F0BE635746C112C /* ContentView.swift */; };
+		E22D06434FB082812FA3A649 /* libzstd in Frameworks */ = {isa = PBXBuildFile; productRef = 0A9E3B4D5DD53ACA7D614C6D /* libzstd */; };
+		E8C08CE4A9D36362A71086F6 /* SkylightsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92204505E37AD0D21254FDBA /* SkylightsApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		050FF4817412EE3D7F6FCB88 /* SpotlightRanking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightRanking.swift; sourceTree = "<group>"; };
+		0C309E9FFFBB6CF9ABED4C87 /* Skylights.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Skylights.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D101E4D55F3D20E320208DA /* PopfeedOAuthClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopfeedOAuthClient.swift; sourceTree = "<group>"; };
+		38A7B3A21B710B47152F9C88 /* SpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndexer.swift; sourceTree = "<group>"; };
+		3D730FBA1FBEEC184138B063 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		42E02EDD1A462B0E19D483B6 /* Gzip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Gzip.c; sourceTree = "<group>"; };
+		4B233D8D8E691B47208123D8 /* PopfeedArchiveReplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopfeedArchiveReplay.swift; sourceTree = "<group>"; };
+		4E68B6044FA38233642DCB33 /* PopfeedRecordSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopfeedRecordSync.swift; sourceTree = "<group>"; };
+		53938E2413C90DD90C7343FC /* DiagnosticLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticLog.swift; sourceTree = "<group>"; };
+		601E6ACEBC3C040781A909D7 /* Gzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gzip.h; sourceTree = "<group>"; };
+		8C95132D8FE633DC0CB929E0 /* PopfeedLiveSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopfeedLiveSync.swift; sourceTree = "<group>"; };
+		92111EFE9C15748A8886E4D5 /* KeychainCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainCredentialStore.swift; sourceTree = "<group>"; };
+		D72001A6AA00000000000003 /* JetstreamCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JetstreamCredentialStore.swift; sourceTree = "<group>"; };
+		92204505E37AD0D21254FDBA /* SkylightsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkylightsApp.swift; sourceTree = "<group>"; };
+		C7121E358AB2551B90509D25 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C96E81C22F0BE635746C112C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E70E6F12F24A8629082F4017 /* SkylightsMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SkylightsMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		558E75F74598DEC891FB94DF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E22D06434FB082812FA3A649 /* libzstd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C15B330CDEBFACB9611ED8BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2E053AB6F9E535FC3D673BCB /* libzstd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		54644C382D47A970910CB3C9 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				53938E2413C90DD90C7343FC /* DiagnosticLog.swift */,
+				42E02EDD1A462B0E19D483B6 /* Gzip.c */,
+				601E6ACEBC3C040781A909D7 /* Gzip.h */,
+				92111EFE9C15748A8886E4D5 /* KeychainCredentialStore.swift */,
+				D72001A6AA00000000000003 /* JetstreamCredentialStore.swift */,
+				4B233D8D8E691B47208123D8 /* PopfeedArchiveReplay.swift */,
+				8C95132D8FE633DC0CB929E0 /* PopfeedLiveSync.swift */,
+				0D101E4D55F3D20E320208DA /* PopfeedOAuthClient.swift */,
+				4E68B6044FA38233642DCB33 /* PopfeedRecordSync.swift */,
+				38A7B3A21B710B47152F9C88 /* SpotlightIndexer.swift */,
+				050FF4817412EE3D7F6FCB88 /* SpotlightRanking.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		A6F1B3CE5763E9127E32A3E6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0C309E9FFFBB6CF9ABED4C87 /* Skylights.app */,
+				E70E6F12F24A8629082F4017 /* SkylightsMac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EBD9DF8D0E493ED1974EFD55 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				3D730FBA1FBEEC184138B063 /* Assets.xcassets */,
+				C96E81C22F0BE635746C112C /* ContentView.swift */,
+				C7121E358AB2551B90509D25 /* Info.plist */,
+				92204505E37AD0D21254FDBA /* SkylightsApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		F4C2357EC756456D21686721 = {
+			isa = PBXGroup;
+			children = (
+				EBD9DF8D0E493ED1974EFD55 /* App */,
+				54644C382D47A970910CB3C9 /* Core */,
+				A6F1B3CE5763E9127E32A3E6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6BDA677B57D46A0DA9793562 /* Skylights */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E04BA68B5E4AA7EEF88CA942 /* Build configuration list for PBXNativeTarget "Skylights" */;
+			buildPhases = (
+				80CFF71B9226DE1D22907634 /* Sources */,
+				44A370EF372122D23DF13C89 /* Resources */,
+				558E75F74598DEC891FB94DF /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Skylights;
+			packageProductDependencies = (
+				0A9E3B4D5DD53ACA7D614C6D /* libzstd */,
+			);
+			productName = Skylights;
+			productReference = 0C309E9FFFBB6CF9ABED4C87 /* Skylights.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A7856FEDBB5E3369C7432B36 /* SkylightsMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E65702831ED4C7EF81BAD00D /* Build configuration list for PBXNativeTarget "SkylightsMac" */;
+			buildPhases = (
+				8A0B68480AECB375AAB68598 /* Sources */,
+				481F3D428E89F562CDEFE050 /* Resources */,
+				C15B330CDEBFACB9611ED8BD /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SkylightsMac;
+			packageProductDependencies = (
+				EECEDFB8BD37FFDB590B7A00 /* libzstd */,
+			);
+			productName = SkylightsMac;
+			productReference = E70E6F12F24A8629082F4017 /* SkylightsMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		282BD03AD3E8ED6FABB5B4B5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					6BDA677B57D46A0DA9793562 = {
+						DevelopmentTeam = TPFLJ6KV49;
+					};
+				};
+			};
+			buildConfigurationList = E9BAF1D9DF307AF8E250DE84 /* Build configuration list for PBXProject "Skylights" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = F4C2357EC756456D21686721;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				03B59B414DF59AFF12ABB02B /* XCRemoteSwiftPackageReference "zstd" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A6F1B3CE5763E9127E32A3E6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6BDA677B57D46A0DA9793562 /* Skylights */,
+				A7856FEDBB5E3369C7432B36 /* SkylightsMac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		44A370EF372122D23DF13C89 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1429E2C7F4FF91608F2154CF /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		481F3D428E89F562CDEFE050 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				314E8507F5E846F59257F8C3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		80CFF71B9226DE1D22907634 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E055E83D361CC091AD5A498A /* ContentView.swift in Sources */,
+				66654823076F7A2315C8B7BE /* DiagnosticLog.swift in Sources */,
+				9C2642730D61D5C4964CC5F7 /* Gzip.c in Sources */,
+				C0E9D6BBAA6D59986752656A /* KeychainCredentialStore.swift in Sources */,
+				24CDA1C07831E55681F92B24 /* PopfeedArchiveReplay.swift in Sources */,
+				620F78AC167B264FD7D3C17B /* PopfeedLiveSync.swift in Sources */,
+				22DE546D2B4D69D422A902CC /* PopfeedOAuthClient.swift in Sources */,
+				BCC2EAD803AED8AB24ACA6DB /* PopfeedRecordSync.swift in Sources */,
+				7D7828147EBD5C28C2D9E6BD /* SkylightsApp.swift in Sources */,
+				4D9C6E106743CEAFFCEFFA6E /* SpotlightIndexer.swift in Sources */,
+				D626CE1154AB6D3A58D1B215 /* SpotlightRanking.swift in Sources */,
+				D72001A6AA00000000000001 /* JetstreamCredentialStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A0B68480AECB375AAB68598 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B11A08E845C7B4A6340AEA1C /* ContentView.swift in Sources */,
+				3F01768DDECFE3756EE1E7D6 /* DiagnosticLog.swift in Sources */,
+				7E45E52001C024D75AB79FD8 /* Gzip.c in Sources */,
+				D4599ACF50E2471437F84C9B /* KeychainCredentialStore.swift in Sources */,
+				73573D3AFF5B81DA27219529 /* PopfeedArchiveReplay.swift in Sources */,
+				B33DCE6B20A222B80B163335 /* PopfeedLiveSync.swift in Sources */,
+				914C1511B1086DE73330D15A /* PopfeedOAuthClient.swift in Sources */,
+				345276DABD6C7A40C6A83AEC /* PopfeedRecordSync.swift in Sources */,
+				E8C08CE4A9D36362A71086F6 /* SkylightsApp.swift in Sources */,
+				CB6C98C1940E953B5B6CBE4F /* SpotlightIndexer.swift in Sources */,
+				632D17D79F6E399EB225EDB9 /* SpotlightRanking.swift in Sources */,
+				D72001A6AA00000000000002 /* JetstreamCredentialStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		692140C948D200942B2E084B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		9ABBEB462CD9365495D6F3A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		CAA53C58C26D3162439E5615 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = TPFLJ6KV49;
+				ENABLE_APP_SANDBOX = YES;
+				INFOPLIST_FILE = App/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Skylights;
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads = NO;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = "$(inherited) -lz";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tinycast.tmdbspotlight;
+				PRODUCT_NAME = Skylights;
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = Core/Gzip.h;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D20A5F092AA118DB39E3601D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = MacAppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_ENTITLEMENTS = Mac/SkylightsMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = TPFLJ6KV49;
+				ENABLE_APP_SANDBOX = YES;
+				INFOPLIST_FILE = Mac/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Skylights;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				OTHER_LDFLAGS = "$(inherited) -lz";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tinycast.skylights.mac;
+				PRODUCT_NAME = Skylights;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = Core/Gzip.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D25C1ADC325187818BC6383C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = MacAppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_ENTITLEMENTS = Mac/SkylightsMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = TPFLJ6KV49;
+				ENABLE_APP_SANDBOX = YES;
+				INFOPLIST_FILE = Mac/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Skylights;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				OTHER_LDFLAGS = "$(inherited) -lz";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tinycast.skylights.mac;
+				PRODUCT_NAME = Skylights;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = Core/Gzip.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F851B740ABD84153CBE41AA1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = TPFLJ6KV49;
+				ENABLE_APP_SANDBOX = YES;
+				INFOPLIST_FILE = App/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Skylights;
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads = NO;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = "$(inherited) -lz";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tinycast.tmdbspotlight;
+				PRODUCT_NAME = Skylights;
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = Core/Gzip.h;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E04BA68B5E4AA7EEF88CA942 /* Build configuration list for PBXNativeTarget "Skylights" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAA53C58C26D3162439E5615 /* Debug */,
+				F851B740ABD84153CBE41AA1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E65702831ED4C7EF81BAD00D /* Build configuration list for PBXNativeTarget "SkylightsMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D20A5F092AA118DB39E3601D /* Debug */,
+				D25C1ADC325187818BC6383C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E9BAF1D9DF307AF8E250DE84 /* Build configuration list for PBXProject "Skylights" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				692140C948D200942B2E084B /* Debug */,
+				9ABBEB462CD9365495D6F3A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		03B59B414DF59AFF12ABB02B /* XCRemoteSwiftPackageReference "zstd" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/zstd.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.7;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0A9E3B4D5DD53ACA7D614C6D /* libzstd */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 03B59B414DF59AFF12ABB02B /* XCRemoteSwiftPackageReference "zstd" */;
+			productName = libzstd;
+		};
+		EECEDFB8BD37FFDB590B7A00 /* libzstd */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 03B59B414DF59AFF12ABB02B /* XCRemoteSwiftPackageReference "zstd" */;
+			productName = libzstd;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 282BD03AD3E8ED6FABB5B4B5 /* Project object */;
+}

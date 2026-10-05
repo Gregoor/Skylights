@@ -1,25 +1,25 @@
-# TMDB Spotlight for iOS
+# Skylights for iOS
 
-A native iOS app that downloads the rolling TMDB release, validates and expands its v5 index, applies delta supersession, and submits a bounded subset to Core Spotlight. It reads poster paths from the same index rows the Tinycast extension uses. Selecting a Spotlight result opens the matching `popfeed.social/movie/...` or `popfeed.social/tv_show/...` link, which iOS can route to the Popfeed app through Universal Links.
+A native iOS app that streams checksummed TMDB row chunks into Core Spotlight and applies deltas with a small resumable sync journal. Spotlight items carry the poster path and TV season count alongside searchable metadata. Selecting a result opens the matching `popfeed.social/movie/...` or `popfeed.social/tv_show/...` link, which iOS can route to the Popfeed app through Universal Links.
 
 ## Build
 
 ```sh
-cd iOS/TMDBSpotlight
+cd ios
 xcodegen generate
-open TMDBSpotlight.xcodeproj
+open Skylights.xcodeproj
 ```
 
-Choose an iOS Simulator or a signed iPhone and run the `TMDBSpotlight` scheme. The app uses the public rolling release at `https://github.com/Gregoor/tinycast-tmdb/releases/download/latest/manifest.json`.
+Choose an iOS Simulator or a signed iPhone and run the `Skylights` scheme. The app uses the public rolling release at `https://github.com/Gregoor/tinycast-tmdb/releases/download/latest/manifest.json`.
 
 ## Indexing limits and diagnostics
 
-Core Spotlight controls storage, ranking, eviction, and when submitted items become visible. The app defaults to indexing all titles in the published TMDB index, ranked by vote count then TMDB popularity, and submits 250 items per call. You can turn off full indexing and set a cap from 1,000 to 150,000 titles. These are app-side guardrails, not guarantees about Apple's private Spotlight capacity. A successful submission means Core Spotlight accepted the call; the app cannot inspect the private index or guarantee every result appears in search.
+The app streams every row in the published catalogue; Core Spotlight controls storage, ranking, eviction, and when submitted items become visible. A successful submission means Core Spotlight accepted the operation; the app cannot inspect Apple's private index or guarantee every result appears in search.
 
-The app persists a compact binary-plist snapshot in Application Support: merged rows, the base SHA-256, applied delta hashes, and the set of Spotlight identifiers. Daily/manual refreshes fetch the manifest and only deltas absent from that snapshot. If GitHub publishes a new base, a foreground sync rebuilds from that base and its deltas; a background run logs that a foreground rebuild is needed. Rebuilds resume from their last accepted 250-item batch after interruption.
+The app keeps only a compact sync journal in preferences: the base hash, applied delta hashes, and the in-progress asset/chunk. It streams each independently checksummed chunk directly to Core Spotlight and advances the checkpoint after accepted operations. A changed base clears the app's Spotlight domain and streams the new base followed by its deltas. Poster paths and season counts are indexed as item keywords, so result details do not require a local catalog copy.
 
-Poster images are fetched from TMDB's `w185` image endpoint, cached locally, and attached with Core Spotlight's local thumbnail URL. The full index downloads every available poster. Downloads are bounded to six concurrent requests; missing/failed posters are logged while title indexing continues. The cache is opportunistic and may be evicted by iOS, so thumbnails are fetched again when those items are next updated.
+Posters are requested on demand when a result or detail page is shown; indexing the catalogue does not download covers. Search rows fetch a 180×180 blurred placeholder from `skylights-posters.watware.workers.dev` alongside the regular TMDB `w185` image. Detail pages request the Worker’s 180×270 blur alongside the full TMDB `w500` poster. The UI uses whichever blur arrives first and fades in the sharp image when it is ready. Worker responses are versioned and cached at the edge and in R2; the app uses normal HTTP caching and logs the Worker cache layer and fetch failures.
 
-The app targets iOS 26 and starts a manually requested index run with `BGContinuedProcessingTask`. This continues after the app is backgrounded and reports progress through the system's Live Activity, including a cancel action. Runs checkpoint at accepted batches and can resume after interruption. Daily delta checks still use best-effort `BGAppRefreshTask` and `BGProcessingTask`; iOS may defer or skip those scheduled runs. Background runs reuse the saved row snapshot and do not re-download an unchanged base. A new base is deferred to a user-started full rebuild. The app logs scheduling, HTTP responses, gzip byte counts, SHA-256 checks, parsed row/delta counts, incremental plans, poster successes/failures, every Core Spotlight batch duration, and any batch error. Logs go to unified logging under subsystem `com.tinycast.tmdbspotlight` / category `indexing` and to `Documents/tmdb-spotlight.log`; the app screen shows the latest 80 lines. On a connected device, use Console.app and filter by that subsystem to capture system-side Core Spotlight messages.
+The app targets iOS 26 and starts a manually requested index run with `BGContinuedProcessingTask`. This continues after the app is backgrounded and reports progress through the system's Live Activity, including a cancel action. Runs checkpoint after each accepted stream chunk and can resume after interruption. Daily delta checks still use best-effort `BGAppRefreshTask` and `BGProcessingTask`; iOS may defer or skip those scheduled runs. Background runs reuse the journal and skip an unchanged base. A new base requires a foreground full rebuild. The app logs scheduling, HTTP responses, stream checksums, applied row counts, poster successes/failures, and batch errors. Logs go to unified logging under subsystem `com.tinycast.tmdbspotlight` / category `indexing` and to `Documents/tmdb-spotlight.log`; the app screen shows the latest 80 lines. On a connected device, use Console.app and filter by that subsystem to capture system-side Core Spotlight messages.
 
-The dataset's binary format is decoded directly from the repository's `TCIDX001` v5 format; a version or integrity mismatch fails visibly. Missing/unpublished deltas are logged and skipped, matching the existing Tinycast client's partial-release handling.
+The Tinycast search index uses `TCIDX001` v6 rows, which include TV season counts. The release publishes separate row-operation streams for Spotlight, with a checksum on each chunk and a whole-asset hash in the manifest. A format-version change forces a base rebuild before deltas resume.
