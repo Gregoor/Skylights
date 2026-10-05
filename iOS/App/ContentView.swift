@@ -575,7 +575,7 @@ struct ContentView: View {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .semibold))
                             .contentTransition(.symbolEffect(.replace))
-                            .frame(width: 24, height: 32)
+                            .frame(width: 44, height: 44)
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -599,7 +599,7 @@ struct ContentView: View {
                         } label: {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundStyle(.tertiary)
-                                .frame(width: 24, height: 32)
+                                .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
@@ -614,7 +614,7 @@ struct ContentView: View {
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(.tertiary)
-                            .frame(width: 24, height: 32)
+                            .frame(width: 44, height: 44)
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -650,7 +650,7 @@ struct ContentView: View {
         } label: {
             Image(systemName: "arrow.triangle.2.circlepath")
                 .font(.system(size: 16, weight: .semibold))
-                .frame(width: 40, height: 40)
+                .frame(width: 44, height: 44)
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
@@ -1616,7 +1616,7 @@ private struct TitleDetailView: View {
             HalfStarRatingControl(value: $rating) {
                 hasEditedReview = true
             }
-            .frame(width: 170, height: 42)
+            .frame(width: 220, height: 44)
             ZStack(alignment: .topLeading) {
                 #if os(macOS)
                 GrowingReviewTextView(
@@ -1798,44 +1798,47 @@ private struct HalfStarRatingControl: View {
     var body: some View {
         HStack(spacing: 0) {
             ForEach(1...5, id: \.self) { star in
-                ZStack {
-                    Image(systemName: symbol(for: star, rating: displayedValue))
-                        .font(.system(size: 24))
-                        .foregroundStyle(displayedValue >= star * 2 - 1 ? .yellow : .secondary)
-                        .accessibilityHidden(true)
-                    HStack(spacing: 0) {
-                        ratingButton(star * 2 - 1, label: "\(Double(star) - 0.5) out of 5 stars")
-                        ratingButton(star * 2, label: "\(star) out of 5 stars")
+                Image(systemName: symbol(for: star, rating: displayedValue))
+                    .font(.system(size: 24))
+                    .foregroundStyle(displayedValue >= star * 2 - 1 ? .yellow : .secondary)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+                    .accessibilityElement()
+                    .accessibilityLabel("\(star) star rating")
+                    .accessibilityValue(accessibilityValue)
+                    .accessibilityHint("Tap the left half for a half-star rating, or the right half for a full-star rating.")
+                    .accessibilityAddTraits(.isButton)
+                    .accessibilityAdjustableAction { direction in
+                        onChange()
+                        let next = max(0, min(10, displayedValue + (direction == .increment ? 1 : -1)))
+                        value = next == 0 ? nil : next
                     }
-                }
-                .frame(width: 34, height: 42)
+                    .gesture(SpatialTapGesture(coordinateSpace: .local).onEnded { tap in
+                        onChange()
+                        let selectedRating = star * 2 - (tap.location.x < 22 ? 1 : 0)
+                        value = value == selectedRating ? nil : selectedRating
+                    })
+                    .onHover { isHovering in
+                        if isHovering {
+                            hoveredValue = star * 2
+                        } else if hoveredValue == star * 2 {
+                            hoveredValue = nil
+                        }
+                    }
             }
         }
+    }
+
+    private var accessibilityValue: String {
+        guard let value else { return "Not rated" }
+        let score = value.isMultiple(of: 2) ? String(value / 2) : String(format: "%.1f", Double(value) / 2)
+        return "\(score) out of 5 stars"
     }
 
     private func symbol(for star: Int, rating: Int) -> String {
         RatingSymbol.name(for: star, rating: rating)
     }
 
-    private func ratingButton(_ rating: Int, label: String) -> some View {
-        Button {
-            onChange()
-            value = value == rating ? nil : rating
-        } label: {
-            Color.clear
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(value == rating ? "Clear rating" : "Set rating to \(label)")
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onHover { isHovering in
-            if isHovering {
-                hoveredValue = rating
-            } else if hoveredValue == rating {
-                hoveredValue = nil
-            }
-        }
-    }
 }
 #endif
 
