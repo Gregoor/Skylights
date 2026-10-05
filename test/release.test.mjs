@@ -14,6 +14,7 @@ import { resolve, join } from "node:path";
 
 import { buildManifest, decideMode, nextDeltas, BASE_REBUILD_DELTAS } from "../Scripts/manifest.mjs";
 import { inBand, MIN_VOTES } from "../Scripts/band.mjs";
+import { VERSION as INDEX_FORMAT_VERSION } from "../src/db/index-format.mjs";
 import { readResponse } from "../src/omdb.mjs";
 import { buildIndexMain } from "../Scripts/build-index.mjs";
 import { MovieIndex } from "../src/db/loader.mjs";
@@ -56,10 +57,11 @@ const check = (label, ok, extra = "") => {
   check("a cold cache rebuilds the base (no marker to diff against)",
     decideMode({ hasMarker: false, deltas: 0 }) === "base");
   check("a warm cache with a short chain adds a delta",
-    decideMode({ hasMarker: true, deltas: 1 }) === "delta");
+    decideMode({ hasMarker: true, deltas: 1, publishedFormatVersion: INDEX_FORMAT_VERSION }) === "delta");
   check(`the chain is compacted before ${BASE_REBUILD_DELTAS}`,
-    decideMode({ hasMarker: true, deltas: BASE_REBUILD_DELTAS - 1 }) === "delta");
-  check(`...and at ${BASE_REBUILD_DELTAS}`, decideMode({ hasMarker: true, deltas: BASE_REBUILD_DELTAS }) === "base");
+    decideMode({ hasMarker: true, deltas: BASE_REBUILD_DELTAS - 1, publishedFormatVersion: INDEX_FORMAT_VERSION }) === "delta");
+  check(`...and at ${BASE_REBUILD_DELTAS}`, decideMode({ hasMarker: true, deltas: BASE_REBUILD_DELTAS,
+    publishedFormatVersion: INDEX_FORMAT_VERSION }) === "base");
   check("an explicit request wins", decideMode({ hasMarker: true, deltas: 0, requested: "base" }) === "base");
 }
 

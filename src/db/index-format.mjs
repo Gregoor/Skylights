@@ -9,7 +9,7 @@ export const VERSION = 7;
 export const HEADER_BYTES = 128;
 export const ROW_RECORD_BYTES = 42;
 
-// Physical section order (byte offsets live in the header as u64s):
+// Physical section order (section offsets live in the header; the superseded section uses a u32):
 //   [0] header          HEADER_BYTES fixed
 //   [1] rowMeta         rowCount * ROW_RECORD_BYTES
 //   [2] termCount       u32
@@ -173,7 +173,9 @@ export function serializeIndex({ rows, termOffsets, termsBlob, termRanges, posti
   putU64(h, 80, offTitlePool);
   putU64(h, 88, offOriginalPool);
   putU64(h, 96, offPosterPool);
-  putU64(h, 108, offSuperseded);
+  // Superseded data begins well below 4 GiB for every supported index. Keep this as a u32 because
+  // the spotlight stream's u64 offset starts at byte 112 and occupies 112–119.
+  h.setUint32(108, offSuperseded, true);
 
   const out = new Uint8Array(total);
   const view = new DataView(out.buffer);
@@ -217,7 +219,8 @@ export function parseHeader(bytes) {
     offTitlePool: u64(80),
     offOriginalPool: u64(88),
     offPosterPool: u64(96),
-    offSuperseded: u64(108),
+    // u32 to avoid overlap with the spotlight stream offset stored at byte 112.
+    offSuperseded: u32(108),
     streamOffset: u64(112),
     streamLength: u64(120),
   };
