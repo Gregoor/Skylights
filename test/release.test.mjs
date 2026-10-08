@@ -124,7 +124,7 @@ const check = (label, ok, extra = "") => {
 }
 
 // ── the band the published index covers ─────────────────────────────────────────────────────────
-// A deliberate content decision: keep titles with five TMDB votes or a professional/user rating.
+// Keep titles with five votes, any supported rating, or a release year from last year onward.
 {
   check(`exactly ${MIN_VOTES} votes is in`, inBand({ voteCount: MIN_VOTES }));
   check("...one fewer is out", !inBand({ voteCount: MIN_VOTES - 1 }));
@@ -132,7 +132,7 @@ const check = (label, ok, extra = "") => {
   check("a low-vote title with an RT score is in", inBand({ voteCount: 1, rtScore: 75 }));
   check("a low-vote title with an IMDb score is in", inBand({ voteCount: 1, imdbRating: 82 }));
   check("a zero score still counts as a present RT score", inBand({ voteCount: 0, rtScore: 0 }));
-  check("a record with no qualifying votes or scores is out", !inBand({ title: "no fields", year: 2026 }));
+  check("a current-year title with no votes or scores is in", inBand({ title: "new release", year: new Date().getFullYear() }));
 
   // The builders must apply it — a predicate nothing uses would guard nothing.
   const bdir = resolve(tmpdir(), "tmdb-band");
