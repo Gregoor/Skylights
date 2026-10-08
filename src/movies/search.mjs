@@ -16,7 +16,13 @@ export async function searchMovies(indexes, query, { limit = 10, candidatePool =
   const list = Array.isArray(indexes) ? indexes : [indexes];
   const queryTerms = normalizeTerms(query);
   if (queryTerms.length === 0) return [];
-  const queryFolded = queryTerms.join(" ");
+  const textQueryTerms = queryTerms.length > 1
+    ? queryTerms.filter((term) => !/^\d{4}$/.test(term))
+    : queryTerms;
+  const hasYearFilter = textQueryTerms.length !== queryTerms.length;
+  // Year-filtered queries tend to have many matching titles. A larger pool lets reranking find an
+  // exact short title even when it appears late in the index's row order (for example, "War 2026").
+  const poolSize = hasYearFilter ? Math.max(candidatePool, 256) : candidatePool;
 
   // Keys superseded by anything newer than index i are stale where they appear in i.
   const newerSuperseded = supersededAfter(list);
@@ -25,7 +31,7 @@ export async function searchMovies(indexes, query, { limit = 10, candidatePool =
   const entries = [];
   for (let i = 0; i < list.length; i++) {
     const index = list[i];
-    const candidates = index.collectCandidates(queryTerms, candidatePool);
+    const candidates = index.collectCandidates(queryTerms, poolSize);
     if (candidates.length === 0) continue;
     const records = await index.readRows(candidates);
     const { titles, originals } = await index.readTitles(records);
@@ -48,13 +54,14 @@ export async function searchMovies(indexes, query, { limit = 10, candidatePool =
         posterURL: posters[k] ? `https://image.tmdb.org/t/p/w92${posters[k]}` : null,
         score: movieScore(
           { title, originalTitle, year: rec.year, voteCount: rec.voteCount },
-          queryFolded, queryTerms),
+          queryTerms),
         // Nothing matched the display title but the original did, so a row showing the match should
         // lead with the original. Read off the text rather than the scorer's tiers: its multi-word
         // original tier only fires on an exact whole-string match, so a partial original match
         // ('mala educación' -> 'La mala educación') would otherwise go uncredited.
         matchedOriginal: Boolean(originalFolded) && originalFolded !== titleFolded &&
-          matchesFolded(originalFolded, queryTerms) && !matchesFolded(titleFolded, queryTerms),
+          textQueryTerms.length > 0 && matchesFolded(originalFolded, textQueryTerms) &&
+          !matchesFolded(titleFolded, textQueryTerms),
       });
     }
   }

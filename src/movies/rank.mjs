@@ -21,17 +21,24 @@ const TIER = {
 
 /// Score one movie (with its decoded title/original and folded forms) against a folded query.
 /// Returns a single comparable number; higher is better.
-export function movieScore({ title, originalTitle, year, voteCount }, queryFolded, queryTerms) {
+export function movieScore({ title, originalTitle, year, voteCount }, queryTerms) {
+  // A trailing four-digit token can scope a title search to its release year. Keep that token in
+  // candidate retrieval and year scoring, but don't require it to appear in the title itself.
+  // A lone number stays a title query (e.g. the film "1917").
+  const titleTerms = queryTerms.length > 1
+    ? queryTerms.filter((term) => !/^\d{4}$/.test(term))
+    : queryTerms;
+  const titleQuery = titleTerms.join(" ");
   const titleFolded = foldTitle(title);
   let score = 0;
 
-  if (queryTerms.length === 1) {
-    const q = queryTerms[0];
+  if (titleTerms.length === 1) {
+    const q = titleTerms[0];
     if (titleFolded === q) score += TIER.EXACT_TITLE;
     if (starts(titleFolded, q)) score += TIER.TITLE_PREFIX;
     if (tokenPrefix(titleFolded.split(" "), q, titleFolded)) score += TIER.TOKEN_PREFIX;
     if (tokenSubstring(titleFolded, q)) score += TIER.TOKEN_SUBSTRING;
-    if (queryFolded.length >= 3 && isSubsequence(q, titleFolded)) score += TIER.SUBSEQUENCE;
+    if (q.length >= 3 && isSubsequence(q, titleFolded)) score += TIER.SUBSEQUENCE;
 
     const origFolded = originalTitle ? foldTitle(originalTitle) : "";
     if (origFolded && origFolded !== titleFolded) {
@@ -39,12 +46,12 @@ export function movieScore({ title, originalTitle, year, voteCount }, queryFolde
       else if (starts(origFolded, q)) score += TIER.ORIGINAL_PREFIX;
       else if (origFolded.split(" ").some((w) => starts(w, q))) score += TIER.ORIGINAL_WORD;
     }
-  } else {
+  } else if (titleTerms.length > 1) {
     // multi-word: title matches on the whole folded title as one unit (prefix or full), plus a
     // bonus if the full query is a substring of the title.
-    if (titleFolded === queryFolded) score += TIER.EXACT_TITLE;
-    if (starts(titleFolded, queryFolded)) score += TIER.TITLE_PREFIX;
-    if (queryFolded.length >= 4 && titleFolded.includes(queryFolded)) score += TIER.TOKEN_SUBSTRING;
+    if (titleFolded === titleQuery) score += TIER.EXACT_TITLE;
+    if (starts(titleFolded, titleQuery)) score += TIER.TITLE_PREFIX;
+    if (titleQuery.length >= 4 && titleFolded.includes(titleQuery)) score += TIER.TOKEN_SUBSTRING;
     const origFolded = originalTitle ? foldTitle(originalTitle) : "";
     if (origFolded && origFolded === queryFolded && origFolded !== titleFolded) {
       score += TIER.ORIGINAL_EXACT;

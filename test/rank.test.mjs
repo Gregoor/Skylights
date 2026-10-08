@@ -45,6 +45,7 @@ async function expectFirst(query, expected) {
 await expectFirst("alien", "Alien (1979)");
 await expectFirst("mulholl", "Mulholland Drive (2001)");
 await expectFirst("matrix 1999", "The Matrix (1999)");
+await expectFirst("war 2026", "War (2026)"); // year narrows candidates; exact title still wins
 await expectFirst("interstellar", "Interstellar (2014)");
 await expectFirst("amelie", "Amélie (2001)"); // diacritic fold
 // Three or more terms exercise every required-term check; a `continue` aimed at the wrong loop once
