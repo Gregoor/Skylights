@@ -19,7 +19,7 @@ const TIER = {
   POPULARITY_TIE: 1 << 4,
 };
 
-/// Score one movie (with its decoded title/original and folded forms) against a folded query.
+/// Score one movie (with its decoded title/original and folded forms) against normalized query terms.
 /// Returns a single comparable number; higher is better.
 export function movieScore({ title, originalTitle, year, voteCount }, queryTerms) {
   // A trailing four-digit token can scope a title search to its release year. Keep that token in
@@ -53,7 +53,7 @@ export function movieScore({ title, originalTitle, year, voteCount }, queryTerms
     if (starts(titleFolded, titleQuery)) score += TIER.TITLE_PREFIX;
     if (titleQuery.length >= 4 && titleFolded.includes(titleQuery)) score += TIER.TOKEN_SUBSTRING;
     const origFolded = originalTitle ? foldTitle(originalTitle) : "";
-    if (origFolded && origFolded === queryFolded && origFolded !== titleFolded) {
+    if (origFolded && origFolded === titleQuery && origFolded !== titleFolded) {
       score += TIER.ORIGINAL_EXACT;
     }
   }
