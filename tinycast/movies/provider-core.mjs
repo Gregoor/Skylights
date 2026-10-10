@@ -99,10 +99,22 @@ export function createProviderCore({
         // Open what is installed before asking whether anything newer exists. A cache that is merely due
         // a check holds a valid index, and opening it here is what lets a failed sync leave it serving:
         // a manifest naming an asset the release does not have must not turn into an empty launcher.
-        indexes = await openPathsFor(installedPaths({ cacheDir, fs, maxAgeMs: Infinity, now }));
-        // A cache checked within the refresh window mounts straight from disk; anything else checks the
-        // manifest, which is a network round trip and no longer holds a query, since the transfer yields.
-        if (installedPaths({ cacheDir, fs, maxAgeMs: refreshMs, now })) return indexes;
+        // Try the installed set first so a network failure can still serve it. It may be corrupt or
+        // from an older index format, though; that must not prevent the manifest sync below from
+        // replacing it. In particular, opening an old format throws before syncIndexes gets a chance
+        // to notice the format change and download the current base.
+        const cachedPaths = installedPaths({ cacheDir, fs, maxAgeMs: Infinity, now });
+        if (cachedPaths) {
+          try {
+            indexes = await openPathsFor(cachedPaths);
+          } catch (error) {
+            log(`installed tmdb index could not be opened; refreshing it: ${error?.message ?? error}`);
+          }
+        }
+        // A valid cache checked within the refresh window mounts straight from disk; anything else
+        // checks the manifest, which is a network round trip and no longer holds a query, since the
+        // transfer yields.
+        if (indexes && installedPaths({ cacheDir, fs, maxAgeMs: refreshMs, now })) return indexes;
         try {
           indexes =
             await openPathsFor(await syncIndexes({ manifestURL, cacheDir, fs, download, gunzip, log, now }));
