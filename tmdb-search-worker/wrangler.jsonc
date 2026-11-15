@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "skylights-tmdb-search",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-14",
+  "workers_dev": true,
+  "triggers": { "crons": ["* * * * *"] },
+  "cache": { "enabled": true },
+  "limits": { "cpu_ms": 300000 },
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "skylights-tmdb-search",
+      "database_id": "1b2f8110-9594-46ab-a3c8-82bf018410c0",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
