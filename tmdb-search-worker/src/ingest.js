@@ -260,37 +260,50 @@ async function syncTmdb(env, date) {
 
 async function syncImdbRatings(env, date) {
   if (await getState(env.DB, "imdb_rating_date") === date) return 0;
-  const response = await fetch("https://datasets.imdbws.com/title.ratings.tsv.gz");
-  if (!response.ok) throw new Error(`IMDb ratings -> HTTP ${response.status}`);
-  await env.DB.prepare("DELETE FROM imdb_rating_feed").run();
-  let rows = [];
-  const statements = [];
-  const flush = async () => {
-    if (!rows.length) return;
-    statements.push(`INSERT INTO imdb_rating_feed(imdb_id, rating) VALUES ${rows.join(",")}
-      ON CONFLICT(imdb_id) DO UPDATE SET rating=excluded.rating;`);
-    rows = [];
-    if (statements.length >= 100) await writeStatementBatches(env.DB, statements.splice(0));
-  };
-  await streamGzipLines(response, async (line) => {
-    const first = line.indexOf("\t");
-    const second = line.indexOf("\t", first + 1);
-    if (first < 0 || second < 0) return;
-    const imdbId = line.slice(0, first);
-    if (!imdbId.startsWith("tt")) return;
-    const rating = Number.parseFloat(line.slice(first + 1, second));
-    if (!Number.isFinite(rating)) return;
-    rows.push(`(${sqlText(imdbId)}, ${Math.max(0, Math.min(100, Math.round(rating * 10)))})`);
-    if (rows.length === 300) await flush();
-  });
-  await flush();
-  await writeStatementBatches(env.DB, statements);
-  const result = await env.DB.prepare(`UPDATE titles SET imdb_rating=i.rating, ratings_at=?
-    FROM imdb_rating_feed i WHERE titles.imdb_id=i.imdb_id
-      AND titles.imdb_rating IS NOT i.rating`).bind(Date.now()).run();
-  await env.DB.prepare("DELETE FROM imdb_rating_feed").run();
+  if (await getState(env.DB, "imdb_rating_feed_date") !== date) {
+    const response = await fetch("https://datasets.imdbws.com/title.ratings.tsv.gz");
+    if (!response.ok) throw new Error(`IMDb ratings -> HTTP ${response.status}`);
+    await env.DB.prepare("DELETE FROM imdb_rating_feed").run();
+    let rows = [];
+    const statements = [];
+    const flush = async () => {
+      if (!rows.length) return;
+      statements.push(`INSERT INTO imdb_rating_feed(imdb_id, rating) VALUES ${rows.join(",")}
+        ON CONFLICT(imdb_id) DO UPDATE SET rating=excluded.rating;`);
+      rows = [];
+      if (statements.length >= 100) await writeStatementBatches(env.DB, statements.splice(0));
+    };
+    await streamGzipLines(response, async (line) => {
+      const first = line.indexOf("\\t");
+      const second = line.indexOf("\\t", first + 1);
+      if (first < 0 || second < 0) return;
+      const imdbId = line.slice(0, first);
+      if (!imdbId.startsWith("tt")) return;
+      const rating = Number.parseFloat(line.slice(first + 1, second));
+      if (!Number.isFinite(rating)) return;
+      rows.push(`(${sqlText(imdbId)}, ${Math.max(0, Math.min(100, Math.round(rating * 10)))})`);
+      if (rows.length === 300) await flush();
+    });
+    await flush();
+    await writeStatementBatches(env.DB, statements);
+    await setState(env.DB, "imdb_rating_feed_date", date);
+  }
+  let changed = 0;
+  for (;;) {
+    const page = await env.DB.prepare("SELECT imdb_id FROM imdb_rating_feed ORDER BY imdb_id LIMIT 25000").all();
+    const rows = page.results ?? [];
+    if (!rows.length) break;
+    const lastId = rows.at(-1).imdb_id;
+    const result = await env.DB.prepare(`UPDATE titles SET imdb_rating=i.rating, ratings_at=?
+      FROM imdb_rating_feed i WHERE titles.imdb_id=i.imdb_id AND i.imdb_id<=?
+        AND titles.imdb_rating IS NOT i.rating`).bind(Date.now(), lastId).run();
+    changed += result.meta?.changes ?? 0;
+    await env.DB.prepare("DELETE FROM imdb_rating_feed WHERE imdb_id<=?").bind(lastId).run();
+    await pause(250);
+  }
   await setState(env.DB, "imdb_rating_date", date);
-  return result.meta?.changes ?? 0;
+  await setState(env.DB, "imdb_rating_feed_date", "");
+  return changed;
 }
 
 function omdbRating(payload, source) {
