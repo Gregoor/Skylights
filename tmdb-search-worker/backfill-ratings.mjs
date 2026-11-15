@@ -121,10 +121,12 @@ async function flush() {
   const statement =
     "WITH incoming(id, media_type, rt_score, metacritic_score, imdb_rating, metacritic_source, ratings_at, mdblist_ratings_at) AS (VALUES " +
     batch.join(",") +
-    ") UPDATE titles SET rt_score=incoming.rt_score, " +
-    "metacritic_score=incoming.metacritic_score, imdb_rating=incoming.imdb_rating, " +
-    "metacritic_source=incoming.metacritic_source, ratings_at=incoming.ratings_at, " +
-    "mdblist_ratings_at=incoming.mdblist_ratings_at FROM incoming " +
+    ") UPDATE titles SET rt_score=COALESCE(incoming.rt_score, titles.rt_score), " +
+    "metacritic_score=COALESCE(incoming.metacritic_score, titles.metacritic_score), " +
+    "imdb_rating=COALESCE(incoming.imdb_rating, titles.imdb_rating), " +
+    "metacritic_source=COALESCE(incoming.metacritic_source, titles.metacritic_source), " +
+    "ratings_at=MAX(titles.ratings_at, incoming.ratings_at), " +
+    "mdblist_ratings_at=MAX(titles.mdblist_ratings_at, incoming.mdblist_ratings_at) FROM incoming " +
     "WHERE titles.id=incoming.id AND titles.media_type=incoming.media_type;\n";
   await write(statement);
   batch = [];
