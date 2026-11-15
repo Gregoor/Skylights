@@ -167,8 +167,12 @@ export default {
       mediaType ?? null,
       limit);
 
-    const { results } = await statement.all();
-    return json({ query, results }, 200,
+    const searchResult = await statement.all();
+    const response = json({ query, results: searchResult.results }, 200,
       "public, max-age=0, s-maxage=86400, stale-while-revalidate=3600");
+    if (searchResult.meta?.duration != null) {
+      response.headers.set("server-timing", `d1;dur=${searchResult.meta.duration}`);
+    }
+    return response;
   }
 };
