@@ -78,7 +78,8 @@ async function writeStatementBatches(db, statements) {
 }
 
 async function stageTmdbExport(env, date, kind, mediaType) {
-  const url = `https://files.tmdb.org/p/exports/${kind}_${date.replaceAll("-", "_")}.json.gz`;
+  const [year, month, day] = date.split("-");
+  const url = `https://files.tmdb.org/p/exports/${kind}_${month}_${day}_${year}.json.gz`;
   const response = await fetch(url);
   if (!response.ok) throw new Error(`TMDB ${kind} export -> HTTP ${response.status}`);
   const sqlBatch = [];
