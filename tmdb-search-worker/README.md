@@ -50,7 +50,7 @@ Set `TMDB_READ_TOKEN` and `OMDB_API_KEY` as Worker secrets before deploying. `MD
 is optional; that source is skipped when absent. The Worker Cron is configured in `wrangler.jsonc`
 and now owns D1 ingestion. The GitHub Daily Index workflow remains to publish the downloadable
 catalog used by Skylights Spotlight until that client moves; its enrichment work temporarily overlaps
-with the Worker. The separate GitHub workflow that imported the catalog into D1 has been removed.
+with the Worker. No GitHub job imports the catalog into D1; the Worker owns that database.
 
 ## Search API
 

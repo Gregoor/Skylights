@@ -473,7 +473,8 @@ export async function runScheduledIngestion(env) {
     results.omdb = await syncOmdb(env, date);
     results.mdblist = await syncMDBList(env, date);
     console.log(JSON.stringify({ date, ...results }));
-    return Boolean(results.tmdb.changed || results.imdb || results.omdb || results.mdblist);
+    return Boolean(results.tmdb.changed || results.imdb || results.omdb || results.mdblist ||
+      await getState(env.DB, "search_cache_dirty"));
   } finally {
     await env.DB.prepare("UPDATE worker_locks SET expires_at=0 WHERE name='ingestion'").run();
   }

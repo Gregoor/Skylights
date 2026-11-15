@@ -121,6 +121,7 @@ export default {
     if (changed) {
       try {
         await ctx.cache.purge({ purgeEverything: true });
+        await env.DB.prepare("DELETE FROM sync_state WHERE key='search_cache_dirty'").run();
       } catch (error) {
         console.error("search cache purge failed", String(error));
       }
